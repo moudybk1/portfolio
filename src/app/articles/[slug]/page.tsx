@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
@@ -5,18 +6,47 @@ import remarkGfm from "remark-gfm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getPostBySlug } from "@/lib/posts";
+import { siteConfig } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post || !post.published) return { title: "Not Found" };
+
+  const url = `/articles/${post.slug}`;
+
   return {
-    title: `${post.title} | Moudy`,
+    title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url,
+      type: "article",
+      publishedTime: new Date(post.created_at + "Z").toISOString(),
+      modifiedTime: new Date(post.updated_at + "Z").toISOString(),
+      authors: [siteConfig.name],
+      images: [
+        {
+          url: siteConfig.ogImage,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      creator: `@${siteConfig.twitter}`,
+      images: [siteConfig.ogImage],
+    },
   };
 }
 

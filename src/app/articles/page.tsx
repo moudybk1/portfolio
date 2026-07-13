@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -5,10 +6,20 @@ import { listPublishedPosts } from "@/lib/posts";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Articles | Moudy",
+export const metadata: Metadata = {
+  title: "Articles",
   description:
-    "Notes and writing about Web3 support, community, and anything else on my mind.",
+    "Notes and writing about customer support, Web3 community, and the systems behind calm operations.",
+  alternates: {
+    canonical: "/articles",
+  },
+  openGraph: {
+    title: "Articles | Moudy",
+    description:
+      "Notes and writing about customer support, Web3 community, and the systems behind calm operations.",
+    url: "/articles",
+    type: "website",
+  },
 };
 
 export default function ArticlesPage() {
