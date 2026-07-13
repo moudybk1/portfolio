@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ArticlesPage() {
-  const posts = listPublishedPosts();
+export default async function ArticlesPage() {
+  const posts = await listPublishedPosts();
 
   return (
     <>

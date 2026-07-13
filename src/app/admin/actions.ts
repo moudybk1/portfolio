@@ -45,7 +45,7 @@ export async function createPostAction(formData: FormData): Promise<void> {
   await requireAuth();
   const input = postInput(formData);
   if (!input.title) return;
-  createPost(input);
+  await createPost(input);
   revalidatePath("/");
   revalidatePath("/articles");
   redirect("/admin");
@@ -56,7 +56,7 @@ export async function updatePostAction(formData: FormData): Promise<void> {
   const id = Number(formData.get("id"));
   const input = postInput(formData);
   if (!id || !input.title) return;
-  updatePost(id, input);
+  await updatePost(id, input);
   revalidatePath("/");
   revalidatePath("/articles");
   redirect("/admin");
@@ -65,7 +65,7 @@ export async function updatePostAction(formData: FormData): Promise<void> {
 export async function deletePostAction(formData: FormData): Promise<void> {
   await requireAuth();
   const id = Number(formData.get("id"));
-  if (id) deletePost(id);
+  if (id) await deletePost(id);
   revalidatePath("/");
   revalidatePath("/articles");
 }

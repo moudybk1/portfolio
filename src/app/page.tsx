@@ -69,8 +69,8 @@ const contact = {
   telegram: "mowdylowdy",
 };
 
-export default function Home() {
-  const posts = listPublishedPosts().slice(0, 3);
+export default async function Home() {
+  const posts = (await listPublishedPosts()).slice(0, 3);
 
   return (
     <>

@@ -13,7 +13,7 @@ export default async function EditPostPage({ params }: Props) {
   if (!(await isAuthenticated())) redirect("/admin/login");
 
   const { id } = await params;
-  const post = getPostById(Number(id));
+  const post = await getPostById(Number(id));
   if (!post) notFound();
 
   return (

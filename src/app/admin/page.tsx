@@ -10,7 +10,7 @@ export const metadata = { title: "Admin | Moudy" };
 
 export default async function AdminPage() {
   if (!(await isAuthenticated())) redirect("/admin/login");
-  const posts = listAllPosts();
+  const posts = await listAllPosts();
 
   return (
     <main className="flex-1">

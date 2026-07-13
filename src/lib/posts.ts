@@ -12,28 +12,52 @@ export type Post = {
   updated_at: string;
 };
 
-export function listPublishedPosts(): Post[] {
-  return getDb()
-    .prepare("SELECT * FROM posts WHERE published = 1 ORDER BY created_at DESC")
-    .all() as Post[];
+function toPost(row: Record<string, unknown>): Post {
+  return {
+    id: Number(row.id),
+    slug: String(row.slug),
+    title: String(row.title),
+    excerpt: String(row.excerpt ?? ""),
+    content: String(row.content ?? ""),
+    tags: String(row.tags ?? ""),
+    published: Number(row.published),
+    created_at: String(row.created_at),
+    updated_at: String(row.updated_at),
+  };
 }
 
-export function listAllPosts(): Post[] {
-  return getDb()
-    .prepare("SELECT * FROM posts ORDER BY created_at DESC")
-    .all() as Post[];
+export async function listPublishedPosts(): Promise<Post[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM posts WHERE published = 1 ORDER BY created_at DESC"
+  );
+  return result.rows.map(toPost);
 }
 
-export function getPostBySlug(slug: string): Post | undefined {
-  return getDb().prepare("SELECT * FROM posts WHERE slug = ?").get(slug) as
-    | Post
-    | undefined;
+export async function listAllPosts(): Promise<Post[]> {
+  const db = await getDb();
+  const result = await db.execute(
+    "SELECT * FROM posts ORDER BY created_at DESC"
+  );
+  return result.rows.map(toPost);
 }
 
-export function getPostById(id: number): Post | undefined {
-  return getDb().prepare("SELECT * FROM posts WHERE id = ?").get(id) as
-    | Post
-    | undefined;
+export async function getPostBySlug(slug: string): Promise<Post | undefined> {
+  const db = await getDb();
+  const result = await db.execute({
+    sql: "SELECT * FROM posts WHERE slug = ?",
+    args: [slug],
+  });
+  return result.rows[0] ? toPost(result.rows[0]) : undefined;
+}
+
+export async function getPostById(id: number): Promise<Post | undefined> {
+  const db = await getDb();
+  const result = await db.execute({
+    sql: "SELECT * FROM posts WHERE id = ?",
+    args: [id],
+  });
+  return result.rows[0] ? toPost(result.rows[0]) : undefined;
 }
 
 export function slugify(title: string): string {
@@ -46,73 +70,73 @@ export function slugify(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function uniqueSlug(base: string, excludeId?: number): string {
-  const db = getDb();
+async function uniqueSlug(base: string, excludeId?: number): Promise<string> {
+  const db = await getDb();
   let slug = base || "untitled";
   let n = 2;
   while (true) {
-    const row = db
-      .prepare("SELECT id FROM posts WHERE slug = ?")
-      .get(slug) as { id: number } | undefined;
-    if (!row || row.id === excludeId) return slug;
+    const result = await db.execute({
+      sql: "SELECT id FROM posts WHERE slug = ?",
+      args: [slug],
+    });
+    const row = result.rows[0];
+    if (!row || Number(row.id) === excludeId) return slug;
     slug = `${base}-${n++}`;
   }
 }
 
-export function createPost(input: {
+export type PostInput = {
   title: string;
   excerpt: string;
   content: string;
   tags: string;
   published: boolean;
-}): Post {
-  const slug = uniqueSlug(slugify(input.title));
-  const result = getDb()
-    .prepare(
-      `INSERT INTO posts (slug, title, excerpt, content, tags, published)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    )
-    .run(
-      slug,
-      input.title,
-      input.excerpt,
-      input.content,
-      input.tags,
-      input.published ? 1 : 0
-    );
-  return getPostById(Number(result.lastInsertRowid))!;
-}
+};
 
-export function updatePost(
-  id: number,
-  input: {
-    title: string;
-    excerpt: string;
-    content: string;
-    tags: string;
-    published: boolean;
-  }
-): Post | undefined {
-  const slug = uniqueSlug(slugify(input.title), id);
-  getDb()
-    .prepare(
-      `UPDATE posts
-       SET slug = ?, title = ?, excerpt = ?, content = ?, tags = ?, published = ?,
-           updated_at = datetime('now')
-       WHERE id = ?`
-    )
-    .run(
+export async function createPost(input: PostInput): Promise<Post> {
+  const db = await getDb();
+  const slug = await uniqueSlug(slugify(input.title));
+  const result = await db.execute({
+    sql: `INSERT INTO posts (slug, title, excerpt, content, tags, published)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+    args: [
       slug,
       input.title,
       input.excerpt,
       input.content,
       input.tags,
       input.published ? 1 : 0,
-      id
-    );
+    ],
+  });
+  const post = await getPostById(Number(result.lastInsertRowid));
+  return post!;
+}
+
+export async function updatePost(
+  id: number,
+  input: PostInput
+): Promise<Post | undefined> {
+  const db = await getDb();
+  const slug = await uniqueSlug(slugify(input.title), id);
+  await db.execute({
+    sql: `UPDATE posts
+          SET slug = ?, title = ?, excerpt = ?, content = ?, tags = ?, published = ?,
+              updated_at = datetime('now')
+          WHERE id = ?`,
+    args: [
+      slug,
+      input.title,
+      input.excerpt,
+      input.content,
+      input.tags,
+      input.published ? 1 : 0,
+      id,
+    ],
+  });
   return getPostById(id);
 }
 
-export function deletePost(id: number): void {
-  getDb().prepare("DELETE FROM posts WHERE id = ?").run(id);
+export async function deletePost(id: number): Promise<void> {
+  const db = await getDb();
+  await db.execute({ sql: "DELETE FROM posts WHERE id = ?", args: [id] });
 }

@@ -4,8 +4,8 @@ import { siteConfig } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const posts = listPublishedPosts();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await listPublishedPosts();
 
   const articleEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${siteConfig.url}/articles/${post.slug}`,
