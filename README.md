@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# moudy.xyz — Portfolio & Articles
 
-## Getting Started
+Portfolio Web3 Customer Support Specialist dengan bagian artikel dan admin panel untuk menulis.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, Server Actions) + **TypeScript**
+- **Tailwind CSS v4** + `@tailwindcss/typography`
+- **SQLite** (`better-sqlite3`) — database file lokal di `data/portfolio.db`, tanpa server database terpisah
+- **Markdown** (`react-markdown` + GFM) untuk konten artikel
+- Auth admin sederhana: password + session cookie JWT (`jose`)
+
+## Menjalankan
 
 ```bash
+npm install
+npm run seed   # opsional: isi 1 artikel contoh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin panel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- URL: `/admin` (login di `/admin/login`)
+- Password default: `admin` — **ganti sebelum deploy!**
 
-## Learn More
+Salin `.env.example` ke `.env.local` dan isi:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+ADMIN_PASSWORD=password-rahasiamu
+AUTH_SECRET=string-acak-yang-panjang
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Dari admin panel kamu bisa membuat, mengedit, mem-publish/draft, dan menghapus artikel. Konten ditulis dalam Markdown (heading, list, tabel, code block, dll).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Struktur halaman
 
-## Deploy on Vercel
+| Route | Deskripsi |
+| --- | --- |
+| `/` | Landing page (hero, about, toolkit, work, artikel terbaru, contact) |
+| `/articles` | Daftar semua artikel yang dipublish |
+| `/articles/[slug]` | Halaman baca artikel |
+| `/admin` | Dashboard artikel (butuh login) |
+| `/admin/new`, `/admin/edit/[id]` | Editor artikel |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Catatan deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Database SQLite disimpan sebagai file di folder `data/`, jadi deploy di host dengan persistent disk (VPS, Railway, Fly.io, dsb). Platform serverless murni seperti Vercel tidak mempertahankan file lokal antar-request.
