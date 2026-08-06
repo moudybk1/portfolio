@@ -27,8 +27,8 @@ export async function getDb(): Promise<Client> {
   if (!client) client = createDbClient();
 
   if (!schemaReady) {
-    schemaReady = client
-      .execute(
+    schemaReady = (async () => {
+      await client.execute(
         `CREATE TABLE IF NOT EXISTS posts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           slug TEXT NOT NULL UNIQUE,
@@ -40,8 +40,16 @@ export async function getDb(): Promise<Client> {
           created_at TEXT NOT NULL DEFAULT (datetime('now')),
           updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         )`
-      )
-      .then(() => undefined);
+      );
+      await client.execute(
+        `CREATE TABLE IF NOT EXISTS login_attempts (
+          ip_hash TEXT PRIMARY KEY,
+          attempts INTEGER NOT NULL DEFAULT 0,
+          window_start INTEGER NOT NULL DEFAULT 0,
+          locked_until INTEGER NOT NULL DEFAULT 0
+        )`
+      );
+    })();
   }
   await schemaReady;
 

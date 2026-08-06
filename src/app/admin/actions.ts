@@ -5,19 +5,55 @@ import { revalidatePath } from "next/cache";
 import {
   createSession,
   destroySession,
-  getAdminPassword,
   isAuthenticated,
+  verifyAdminPassword,
 } from "@/lib/auth";
 import { createPost, deletePost, updatePost } from "@/lib/posts";
+import {
+  authDelay,
+  checkLoginRateLimit,
+  clearLoginAttempts,
+  getClientIp,
+  recordFailedLogin,
+} from "@/lib/rate-limit";
+
+export type LoginState = {
+  error?: string;
+  locked?: boolean;
+  retryAfterSeconds?: number;
+};
 
 export async function login(
-  _prevState: { error?: string },
+  _prevState: LoginState,
   formData: FormData
-): Promise<{ error?: string }> {
-  const password = formData.get("password");
-  if (password !== getAdminPassword()) {
+): Promise<LoginState> {
+  // Honeypot — bots that fill hidden fields get a silent fake failure
+  const honeypot = String(formData.get("website") || "");
+  if (honeypot.trim()) {
+    await authDelay(800);
     return { error: "Wrong password." };
   }
+
+  const ip = await getClientIp();
+  const rate = await checkLoginRateLimit(ip);
+  if (!rate.ok) {
+    await authDelay(600);
+    return {
+      error: `Too many attempts. Try again in ${Math.ceil(rate.retryAfterSeconds / 60)} minutes.`,
+      locked: true,
+      retryAfterSeconds: rate.retryAfterSeconds,
+    };
+  }
+
+  const password = String(formData.get("password") || "");
+  await authDelay(); // constant-ish delay before comparing
+
+  if (!verifyAdminPassword(password)) {
+    await recordFailedLogin(ip);
+    return { error: "Wrong password." };
+  }
+
+  await clearLoginAttempts(ip);
   await createSession();
   redirect("/admin");
 }
