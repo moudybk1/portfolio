@@ -1,0 +1,101 @@
+/* Keep every message slot stable while the conversation fades between states. */
+.ticket-demo .ticket-message {
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 650ms;
+}
+.ticket-demo .ticket-messages {
+  transition:
+    opacity 650ms ease,
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ticket-demo[data-cycle-phase="closing"] .ticket-messages {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.ticket-demo .ticket-result {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 500ms ease,
+    transform 550ms ease,
+    visibility 500ms;
+}
+.ticket-demo .ticket-result[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.ticket-demo .ticket-state > span {
+  display: inline-block;
+  animation: ticket-status-enter 450ms ease both;
+}
+.ticket-demo .ticket-state {
+  min-width: 78px;
+  text-align: center;
+}
+@keyframes ticket-status-enter {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 767px), (max-height: 560px) {
+  .ticket-demo[data-variant="hero"] .ticket-messages {
+    position: relative;
+    isolation: isolate;
+  }
+  .ticket-demo[data-variant="hero"] .ticket-message {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(9px);
+    transition:
+      opacity 260ms ease,
+      transform 500ms ease,
+      visibility 260ms;
+  }
+  .ticket-demo[data-variant="hero"] .ticket-message[data-past="true"] {
+    transform: translateY(-8px);
+  }
+  .ticket-demo[data-variant="hero"]
+    .ticket-message[data-current="true"][data-visible="true"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity 620ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 120ms,
+      visibility 0s;
+  }
+  .ticket-demo .ticket-history-controls {
+    transition: opacity 450ms ease;
+  }
+  .ticket-demo[data-cycle-phase="closing"] .ticket-history-controls {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticket-demo .ticket-message,
+  .ticket-demo .ticket-messages,
+  .ticket-demo .ticket-result,
+  .ticket-demo .ticket-state > span,
+  .ticket-demo[data-variant="hero"] .ticket-message,
+  .ticket-demo[data-variant="hero"]
+    .ticket-message[data-current="true"][data-visible="true"] {
+    transition: none;
+    animation: none;
+  }
+}

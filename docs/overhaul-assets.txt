@@ -1,0 +1,41 @@
+Overhaul reference: AI Designer Portfolio (MotionSites MCP)
+https://motionsites.ai/?prompt=vortex-studio-hero
+
+Direction: full-width editorial typography, oversized experience gallery, magazine About layout, accordion principles, horizontal toolkit, editorial contact and footer.
+
+Illustrations are abstract editorial artwork. They do not depict client products or project screenshots.
+
+
+Asset: public/images/experience-analytics.webp
+Built-in imagegen prompt:
+Use case: stylized-concept. Asset type: elegant professional portfolio editorial artwork for analytics support experience. Create a wide 4:3 editorial 3D still life of one sculptural curved sheet made from many precisely aligned dark graphite metallic ribs, like a smooth rising wave of data. Place the elegant sculptural object in the right two thirds, with generous clear negative space on the left. Pale silver-gray seamless studio environment and softly lit surface, one very restrained emerald reflection, diffuse daylight, tactile matte and brushed metal, crisp yet calm art direction. Refined Swiss design studio visual, no sci-fi glows. This is abstract editorial art, not a software screenshot or dashboard. No text, numbers, charts, logos, labels, frames, people or UI.
+
+
+Asset: public/images/experience-gaming.webp
+Built-in imagegen prompt:
+Use case: stylized-concept. Asset type: elegant professional portfolio editorial artwork for gaming community support experience. Create a wide 4:3 editorial 3D still life of one bold abstract sculpture formed from two interlocking faceted graphite-metal arcs, expressing playful movement and connection without depicting any identifiable product. Sculptural object on the right two thirds, clear negative space on left. Seamless pale silver-gray studio surface and backdrop, a small restrained emerald reflection, broad softbox lighting, believable brushed material and quiet shadows, refined Swiss design studio art direction. Artistic sculpture, not a controller, screenshot or app mockup. No text, numbers, logos, labels, frames, people, cards or UI. Keep the palette neutral silver and dark graphite with restrained emerald.
+
+
+Asset: public/images/experience-infrastructure.webp
+Built-in imagegen prompt:
+Use case: stylized-concept. Asset type: elegant professional portfolio editorial artwork for decentralized infrastructure support experience. Create a wide 4:3 editorial 3D still life of a precise architectural assembly of small graphite and frosted-gray cubes, connected and stacked into a balanced open geometric structure. Put the structure mainly on the right two thirds, leave spacious clear negative space on the left. Neutral pale silver-gray seamless studio surface and backdrop, soft daylight and quiet diffuse shadows, one subtle emerald-reflected facet, tactile matte metal and glass. Sophisticated calm professional creative studio visual, not a computer server product or software screenshot. No text, numbers, logos, labels, frames, people, diagrams or UI.
+
+
+Viewport layout update (2026-10-13)
+The home route now uses a native vertical scroll-snap stage bounded to 100dvh,
+with persistent navigation and discrete IntersectionObserver page state. The
+existing MotionSites full-viewport reference informed the screen composition;
+no new reference quota or image generation was used for this update.
+Each chapter occupies exactly the available stage height. Panel content can
+scroll within its frame on short screens or with enlarged text. The support
+ticket has its own chapter so the approach screen remains readable on mobile.
+All original portfolio copy remains unchanged.
+
+Screen transition refinement (2026-10-13)
+The enhanced home route now stacks viewport panels instead of scrolling a
+vertical document. Native Web Animations provide a fade-through with short
+translation and scale, driven by discrete wheel, touch, keyboard, and section
+navigation requests. Native snapping remains the no-JavaScript fallback.
+A slim right-side navigator replaces the bottom dock. Its active line extends
+and a small counter shows the current page. Panel animation honors reduced
+motion, and ticket/text animations pause when their page is inactive.

@@ -6,7 +6,7 @@ import { deletePostAction, logout } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Admin | Moudy" };
+export const metadata = { title: "Admin" };
 
 export default async function AdminPage() {
   if (!(await isAuthenticated())) redirect("/admin/login");

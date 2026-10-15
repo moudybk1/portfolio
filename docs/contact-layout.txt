@@ -1,0 +1,37 @@
+Contact composition correction — 2026-10-15
+
+The supplied screenshot showed the Contact chapter: a wide heading at the left,
+description below it, and long contact rows starting far to the right. At
+1720×900 the heading started at x220, the 480px description remained at x220,
+and the 642px action column started at x858 below the heading.
+
+Direction: a single centered invitation for potential collaborators, continuing
+the existing DM Sans / Geist Mono, black / warm cream palette and calm motion.
+DESIGN_VARIANCE 6 / MOTION_INTENSITY 6 / VISUAL_DENSITY 3.
+
+Changes:
+- Heading and description now form one centered text block. Description width
+  is capped at 560px, with a consistent 24px gap from the heading.
+- Email and Telegram sit side by side immediately beneath the description in
+  a 520px action group. Email uses the existing primary button contrast; Telegram
+  uses a quiet outline. Both keep the portfolio's pill shape and original icons.
+- At 1720px the title, description and actions share x860 as their center.
+- Compact layouts reduce type and gaps, retain both buttons on one row, and
+  keep touch targets at least 44px high, including short phone landscape.
+- The rotated words, pause/play control, chapter transitions and content entrance
+  motion remain; the paragraph motion target follows its new wrapper.
+- All original visible copy and contact destinations are unchanged.
+
+Verification:
+- 1720×900: chapter frame/scrollHeight 823/823px. Buttons have matching widths.
+- 320×667: frame 602/602px; each button clientWidth equals scrollWidth at 126px.
+  clear, kind, reliable, lasting, warm and dependable all keep a 64px heading
+  and a 32px ending line. Tested through the actual pause/play controls.
+- 390×844: frame 779/779px; both button widths/scrollWidths are 157px.
+- 768×800: frame 723/723px, including the longest rotating word.
+- 568×320: frame 255/255px; content width/scrollWidth 506/506px.
+- Production build, TypeScript, lint, whitespace and original-copy comparison
+  pass. Copy comparison checked 94 original blocks, with zero missing.
+
+Installed Next.js CSS guidance was read before editing. No dependencies, routes
+or additional client state were introduced. Footer composition is preserved.

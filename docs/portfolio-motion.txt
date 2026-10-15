@@ -1,0 +1,51 @@
+Portfolio motion — 2026-10-15
+
+Direction: a calm professional portfolio for potential collaborators, with
+staged entrances that guide reading and short interaction feedback. Existing
+DM Sans / Geist Mono, black / warm cream themes and one-viewport layouts remain.
+DESIGN_VARIANCE 6 / MOTION_INTENSITY 6 / VISUAL_DENSITY 4.
+
+- Each chapter gets a curated entrance order: label, title, supporting copy,
+  visual and controls. Toolkit items and footer links enter in short staggers.
+- Existing screen transitions continue to control the viewport. A small client
+  hook listens to the existing chapter event and animates only opacity and
+  transform with native Web Animations. It adds no per-frame React state.
+- Project selection settles the image from a 1.055 scale and fades in its
+  caption. AI Playground uses the same media treatment. The image's final
+  transform is released so existing hover feedback still works.
+- The mobile menu opens with an 8px slide and fade; links follow at 40ms steps.
+- Disclosure content fades in on opening. Buttons, contact arrows and public
+  footer links receive short interaction feedback.
+- Compact chapter entrances use 65% of desktop travel. Layout dimensions,
+  content, routes, ticket looping and navigation behavior are preserved.
+- CSS effects run only with prefers-reduced-motion: no-preference. The client
+  hook skips effects for reduced motion, cancels running effects when the
+  preference changes, and cleans up listeners/animations on unmount.
+- New animations are finite. Web Animations are canceled after settling, and
+  cancellation generations prevent older completion callbacks from touching
+  a newer chapter. No package additions, pointer listeners or RAF loops.
+
+Reviewed installed Next.js Server and Client Components / CSS guides and the
+React component checklist: client behavior isolated in a hook, server copy and
+markup preserved, stable refs, strict cleanup and handled cancellation promises.
+
+Browser evidence:
+- Toolkit enters with opacity 0 / translateY 14px at desktop, then settles to
+  opacity 1 / transform none on all eight items.
+- Selected XAI Games image runs portfolio-media-settle; its caption runs
+  portfolio-caption-enter with observed changing opacity.
+- Mobile menu reports portfolio-menu-enter and 0/40/80/120ms link delays.
+  Header remains 65px and the body remains 667px high at 320×667.
+- All eight panel frames and scrollHeight match at 1280×720 (643px) and
+  320×667 (602px), 390×844 (779px) and 844×390 (313px); main deck scrollTop
+  remains 0. Content width equals scrollWidth at each tested size.
+- Rapid Toolkit → About → Home requests settle on the latest destination with
+  opacity 1 / transform none and no motion markers on inactive chapters.
+- Clear Systems disclosure runs portfolio-disclosure-enter. Menu motion also
+  works on /articles; returning through About restores the correct chapter.
+- Black and warm cream themes remain readable; theme preference is restored
+  to system after verification.
+- Production build, TypeScript, lint, whitespace and original copy comparison
+  passed: 94 original blocks checked, zero missing.
+
+Reduced-motion branch was reviewed in source; OS motion settings were not changed.

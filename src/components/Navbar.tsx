@@ -1,118 +1,177 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { flushSync } from "react-dom";
+import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 import BrandLogo from "@/components/BrandLogo";
-import SectionLink from "@/components/SectionLink";
+import SectionLink, { scrollToSection } from "@/components/SectionLink";
+import ThemeToggle from "@/components/ThemeToggle";
+import { DECK_PAGE_CHANGE } from "@/lib/portfolio-navigation";
+import "./Navbar.css";
 
 const links = [
   { section: "about", label: "About" },
+  { section: "ai-playground", label: "AI Playground" },
   { href: "/articles", label: "Articles" },
   { section: "contact", label: "Contact" },
 ] as const;
 
+function subscribePage(onChange: () => void) {
+  document.addEventListener(DECK_PAGE_CHANGE, onChange, true);
+  return () => document.removeEventListener(DECK_PAGE_CHANGE, onChange, true);
+}
+function currentSection() {
+  return (
+    document.querySelector<HTMLElement>(".deck-panel[data-active='true']")
+      ?.id ?? "home"
+  );
+}
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
+  const section = useSyncExternalStore(
+    subscribePage,
+    currentSection,
+    () => "home",
+  );
+  const closeMenu = () => flushSync(() => setMenuOpen(false));
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    const closeOutside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node))
+        setMenuOpen(false);
+    };
+    const media = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (media.matches) setMenuOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("pointerdown", closeOutside);
+    media.addEventListener("change", closeOnDesktop);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOutside);
+      media.removeEventListener("change", closeOnDesktop);
+    };
+  }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-background/80 backdrop-blur-md">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <BrandLogo href="/" />
-
-        <div className="flex items-center gap-2">
-          <ul className="hidden items-center gap-1 text-sm md:flex">
-            {links.map((link) => (
-              <li key={link.label}>
-                {"section" in link ? (
-                  <SectionLink
-                    section={link.section}
-                    className="rounded-md px-3 py-2 text-muted transition-colors hover:bg-white/5 hover:text-foreground"
-                  >
-                    {link.label}
-                  </SectionLink>
-                ) : (
-                  <Link
-                    href={link.href}
-                    className="rounded-md px-3 py-2 text-muted transition-colors hover:bg-white/5 hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-
+    <header ref={headerRef} className="site-header">
+      <nav className="site-container nav-content" aria-label="Main navigation">
+        <BrandLogo
+          href="/"
+          onClick={(event) => {
+            closeMenu();
+            if (
+              pathname !== "/" ||
+              event.button !== 0 ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            )
+              return;
+            event.preventDefault();
+            scrollToSection("home");
+          }}
+        />
+        <ul className="desktop-nav">
+          {links.map((link) => (
+            <li key={link.label}>
+              {"section" in link ? (
+                <SectionLink
+                  section={link.section}
+                  className="nav-link"
+                  aria-current={
+                    pathname === "/" && section === link.section
+                      ? "location"
+                      : undefined
+                  }
+                >
+                  {link.label}
+                </SectionLink>
+              ) : (
+                <Link
+                  href={link.href}
+                  className="nav-link"
+                  aria-current={
+                    pathname.startsWith(link.href) ? "page" : undefined
+                  }
+                >
+                  {link.label}
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+        <div className="nav-actions">
           <SectionLink
             section="contact"
-            className="flex items-center gap-2 rounded-full border border-accent/30 bg-accent-soft px-3.5 py-1.5 font-mono text-xs font-medium uppercase tracking-wider text-accent transition-colors hover:border-accent/60 md:ml-2"
+            className="availability-link"
+            onNavigate={closeMenu}
           >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-            </span>
+            <span className="availability-dot" aria-hidden="true" />
             Open to Work
+            <ArrowUpRight size={15} weight="regular" aria-hidden="true" />
           </SectionLink>
-
+          <ThemeToggle />
           <button
+            ref={toggleRef}
             type="button"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-muted transition-colors hover:bg-white/5 hover:text-foreground md:hidden"
+            className="menu-toggle"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              {menuOpen ? (
-                <>
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                </>
-              ) : (
-                <>
-                  <line x1="4" y1="7" x2="20" y2="7" />
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <line x1="4" y1="17" x2="20" y2="17" />
-                </>
-              )}
-            </svg>
+            {menuOpen ? <X size={22} /> : <List size={22} />}
           </button>
         </div>
       </nav>
-
-      {menuOpen && (
-        <div className="border-t border-line md:hidden">
-          <ul className="mx-auto max-w-6xl space-y-1 px-6 py-4 text-sm">
-            {links.map((link) => (
-              <li key={link.label}>
-                {"section" in link ? (
-                  <SectionLink
-                    section={link.section}
-                    onNavigate={() => setMenuOpen(false)}
-                    className="block rounded-md px-3 py-2.5 text-muted transition-colors hover:bg-white/5 hover:text-foreground"
-                  >
-                    {link.label}
-                  </SectionLink>
-                ) : (
-                  <Link
-                    href={link.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-md px-3 py-2.5 text-muted transition-colors hover:bg-white/5 hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <nav
+        id="mobile-navigation"
+        className="mobile-nav"
+        aria-label="Mobile navigation"
+        hidden={!menuOpen}
+      >
+        <ul className="site-container">
+          {links.map((link) => (
+            <li key={link.label}>
+              {"section" in link ? (
+                <SectionLink
+                  section={link.section}
+                  onNavigate={closeMenu}
+                  aria-current={
+                    pathname === "/" && section === link.section
+                      ? "location"
+                      : undefined
+                  }
+                >
+                  {link.label}
+                  <ArrowUpRight size={22} aria-hidden="true" />
+                </SectionLink>
+              ) : (
+                <Link href={link.href} onClick={() => setMenuOpen(false)}>
+                  {link.label}
+                  <ArrowUpRight size={22} aria-hidden="true" />
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }

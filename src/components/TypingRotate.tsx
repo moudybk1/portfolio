@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Pause, Play } from "@phosphor-icons/react";
+import { useReducedMotion } from "@/components/useReducedMotion";
+import { usePanelVisibility } from "@/components/usePanelVisibility";
 
 const WORDS = [
   "calm",
@@ -15,46 +18,46 @@ const WORDS = [
   "solid",
 ];
 
-const TYPE_MS = 80;
-const DELETE_MS = 45;
-const HOLD_MS = 1600;
-const GAP_MS = 280;
-
 export default function TypingRotate() {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = usePanelVisibility(ref);
   const [wordIndex, setWordIndex] = useState(0);
-  const [text, setText] = useState(WORDS[0]);
-  const [deleting, setDeleting] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
-    const current = WORDS[wordIndex];
-    let timeout: ReturnType<typeof setTimeout>;
-
-    if (!deleting && text === current) {
-      timeout = setTimeout(() => setDeleting(true), HOLD_MS);
-    } else if (deleting && text === "") {
-      timeout = setTimeout(() => {
-        setDeleting(false);
-        setWordIndex((i) => (i + 1) % WORDS.length);
-      }, GAP_MS);
-    } else if (deleting) {
-      timeout = setTimeout(() => setText((t) => t.slice(0, -1)), DELETE_MS);
-    } else {
-      timeout = setTimeout(
-        () => setText(current.slice(0, text.length + 1)),
-        TYPE_MS
-      );
-    }
-
-    return () => clearTimeout(timeout);
-  }, [text, deleting, wordIndex]);
+    if (reduce || paused || !inView) return;
+    const interval = setInterval(
+      () => setWordIndex((index) => (index + 1) % WORDS.length),
+      2800,
+    );
+    return () => clearInterval(interval);
+  }, [reduce, paused, inView]);
 
   return (
-    <span className="whitespace-nowrap text-accent">
-      {text}
+    <span ref={ref} className="typing-container">
+      <span className="sr-only">{WORDS[0]}</span>
       <span
-        className="ml-px inline-block h-[0.85em] w-[2px] translate-y-[0.08em] bg-accent align-baseline animate-pulse"
+        key={reduce ? 0 : wordIndex}
+        className="typing-word"
         aria-hidden="true"
-      />
+      >
+        {WORDS[reduce ? 0 : wordIndex]}
+      </span>
+      {!reduce && (
+        <button
+          type="button"
+          className="animation-control typing-control"
+          aria-label={paused ? "Play text animation" : "Pause text animation"}
+          onClick={() => setPaused((value) => !value)}
+        >
+          {paused ? (
+            <Play size={12} aria-hidden="true" />
+          ) : (
+            <Pause size={12} aria-hidden="true" />
+          )}
+        </button>
+      )}
     </span>
   );
 }

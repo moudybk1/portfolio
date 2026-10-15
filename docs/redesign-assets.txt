@@ -1,0 +1,12 @@
+Portfolio redesign references and assets
+
+MotionSites MCP reference:
+Personal Showcase: https://motionsites.ai/?prompt=personal-showcase
+Adapted ideas: portrait-led composition, restrained typography, layered name treatment, soft entrance transitions. Existing copy, navigation labels, section IDs and public URLs are preserved.
+
+Hero asset:
+public/images/moudy-portrait.webp
+Generated using the built-in imagegen tool, then encoded as WebP with alpha transparency for web delivery. Original illustrated portrait: public/about-photo.png (preserved).
+
+Final imagegen prompt:
+Use case: background-extraction. Asset type: professional personal portfolio hero portrait cutout. Edit the attached existing illustrated portrait: extract only the SAME person, including their complete hair, face, shoulders and upper torso with the white shirt, onto a fully transparent background. Preserve the person's exact facial features, face shape, hairstyle, skin tone, expression, illustrated line-art style and white shirt from the reference. Do not make a new person. Remove every trace of the brick room, furniture and background. Keep natural complete clean silhouette edges and full hair without clipping. Center the upper-body portrait in a portrait-oriented canvas, leaving a little transparent room above the head. No text, logos, extra objects, borders, decorative effects or cast background shadows. Keep the editorial illustration polished and faithful to the original. Actual alpha transparency, not a checkerboard image.

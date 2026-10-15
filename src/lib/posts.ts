@@ -12,6 +12,10 @@ export type Post = {
   updated_at: string;
 };
 
+export function getPostTags(tags: string): string[] {
+  return [...new Set(tags.split(",").map((tag) => tag.trim()).filter(Boolean))];
+}
+
 function toPost(row: Record<string, unknown>): Post {
   return {
     id: Number(row.id),
@@ -52,6 +56,7 @@ export async function getPostBySlug(slug: string): Promise<Post | undefined> {
 }
 
 export async function getPostById(id: number): Promise<Post | undefined> {
+  if (!validPostId(id)) return undefined;
   const db = await getDb();
   const result = await db.execute({
     sql: "SELECT * FROM posts WHERE id = ?",
@@ -70,19 +75,8 @@ export function slugify(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-async function uniqueSlug(base: string, excludeId?: number): Promise<string> {
-  const db = await getDb();
-  let slug = base || "untitled";
-  let n = 2;
-  while (true) {
-    const result = await db.execute({
-      sql: "SELECT id FROM posts WHERE slug = ?",
-      args: [slug],
-    });
-    const row = result.rows[0];
-    if (!row || Number(row.id) === excludeId) return slug;
-    slug = `${base}-${n++}`;
-  }
+function validPostId(id: number): boolean {
+  return Number.isSafeInteger(id) && id > 0;
 }
 
 export type PostInput = {
@@ -95,36 +89,42 @@ export type PostInput = {
 
 export async function createPost(input: PostInput): Promise<Post> {
   const db = await getDb();
-  const slug = await uniqueSlug(slugify(input.title));
-  const result = await db.execute({
-    sql: `INSERT INTO posts (slug, title, excerpt, content, tags, published)
-          VALUES (?, ?, ?, ?, ?, ?)`,
-    args: [
-      slug,
-      input.title,
-      input.excerpt,
-      input.content,
-      input.tags,
-      input.published ? 1 : 0,
-    ],
-  });
-  const post = await getPostById(Number(result.lastInsertRowid));
-  return post!;
+  const stem = slugify(input.title) || "untitled";
+  for (let suffix = 1; ; suffix += 1) {
+    const slug = suffix === 1 ? stem : `${stem}-${suffix}`;
+    // Let the unique constraint arbitrate concurrent submissions atomically.
+    const result = await db.execute({
+      sql: `INSERT INTO posts (slug, title, excerpt, content, tags, published)
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON CONFLICT(slug) DO NOTHING`,
+      args: [
+        slug,
+        input.title,
+        input.excerpt,
+        input.content,
+        input.tags,
+        input.published ? 1 : 0,
+      ],
+    });
+    if (result.rowsAffected === 0) continue;
+    const post = await getPostById(Number(result.lastInsertRowid));
+    return post!;
+  }
 }
 
 export async function updatePost(
   id: number,
   input: PostInput
 ): Promise<Post | undefined> {
+  if (!validPostId(id)) return undefined;
   const db = await getDb();
-  const slug = await uniqueSlug(slugify(input.title), id);
+  // Keep existing links valid when an article's title changes.
   await db.execute({
     sql: `UPDATE posts
-          SET slug = ?, title = ?, excerpt = ?, content = ?, tags = ?, published = ?,
+          SET title = ?, excerpt = ?, content = ?, tags = ?, published = ?,
               updated_at = datetime('now')
           WHERE id = ?`,
     args: [
-      slug,
       input.title,
       input.excerpt,
       input.content,
@@ -137,6 +137,7 @@ export async function updatePost(
 }
 
 export async function deletePost(id: number): Promise<void> {
+  if (!validPostId(id)) return;
   const db = await getDb();
   await db.execute({ sql: "DELETE FROM posts WHERE id = ?", args: [id] });
 }

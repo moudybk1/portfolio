@@ -1,0 +1,61 @@
+About composition correction — 2026-10-15
+
+Audit: the supplied screenshot showed a heading above two disconnected columns:
+paragraphs at lower left and a wide landscape illustration at lower right.
+The title did not share a reading column with the paragraphs.
+
+Direction: a personal introduction for potential collaborators, using the
+existing restrained editorial layout, DM Sans / Geist Mono, black / warm cream,
+8px media corners and calm chapter motion.
+DESIGN_VARIANCE 6 / MOTION_INTENSITY 6 / VISUAL_DENSITY 3.
+
+Recomposition:
+- A centered group within the existing page frame places the image on the left and all About text
+  together on the right. The title now shares the paragraphs' left edge.
+- The illustration retains its original 1024×571 landscape ratio, without crop
+  or zoom. Explicit intrinsic dimensions and auto height show the entire image.
+  Its desktop column has been restored to the earlier broad proportions.
+  The original file and alt text are preserved; responsive image sizes match.
+- Phone portrait stacks the full-width heading, uncropped landscape image and
+  reading area. Image width responds to viewport height, from 160px to 360px,
+  while always keeping the original aspect ratio. The group is capped at 420px.
+- Short landscape places a 120–180px image beside the title and leaves the full
+  width for the reading area. Paragraph controls remain at least 44px tall.
+- Paragraphs share one grid cell on compact screens. Its natural height follows
+  the taller paragraph, keeping controls stable without a fixed empty space.
+  The inactive paragraph is invisible, aria-hidden and inert. Both remain visible
+  at regular desktop sizes. Controls now have 44px touch targets.
+- On compact screens the paragraph counter aligns with the copy's left edge;
+  previous/next buttons align right. Body copy stays at 13px on portrait phones,
+  with tighter leading and spacing only when viewport space is limited.
+- Both paragraphs, title, chapter label, anchor, navigation and existing motion
+  selectors are preserved. No dependencies or new client state are introduced.
+
+Verification:
+- 1280×720: frame and scrollHeight both 643px. Heading and paragraphs share
+  the right column; the composition is 1120px wide. Image is 498.1×277.8px,
+  matching the original aspect ratio, with no horizontal overflow.
+- 390×844: frame/scrollHeight 779/779px. Both paragraph states use exactly the
+  same 557.4px group height and control position. Image is 328×182.9px.
+  Tested in warm cream and dark.
+- 320×568: frame/scrollHeight 503/503px; group 474.6px high, no clipped content.
+  Image is 168×93.7px, retaining the full landscape composition.
+- 320×641: frame/scrollHeight 576/576px; group 515.3px high. Narrow phones use
+  compact spacing up to 700px height to avoid overflow at breakpoint boundaries.
+- 375×667: frame/scrollHeight 602/602px; group 522.9px high.
+- 360×640: frame/scrollHeight 575/575px, no horizontal overflow.
+- 568×320: frame/scrollHeight 255/255px; group 213.7px high.
+- 480×320: frame/scrollHeight 255/255px; group 219.6px high.
+- 768×320: frame/scrollHeight 243/243px; group 197.7px high.
+- 768×800: frame/scrollHeight 723/723px. A narrower group reserves space for
+  the chapter indicator. 1024×600 and 1440×900 also fit without extra scrolling.
+- Work → About transition settles at opacity 1 with no residual transforms on
+  the heading, portrait or reading area. Browser error logs were empty.
+- Final production build, TypeScript, lint and git diff --check passed. The
+  original-copy comparison checked 94 blocks with zero missing.
+
+Installed Next.js image, CSS and Server/Client Component guidance was read.
+The React review kept server-rendered copy, the existing media subscription and
+its cleanup, functional paragraph state updates and isolated client controls.
+Theme preference was restored to system and temporary viewport overrides reset.
+Local development server remains running at http://127.0.0.1:3000/.

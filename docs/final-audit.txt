@@ -1,0 +1,134 @@
+Finalisasi dan audit portfolio — 15 Oktober 2026
+
+Ruang lingkup
+Pemeriksaan source, build production, dependency, route publik/admin, database,
+interaksi browser, layout responsif, dan keutuhan copy. Ini audit fungsional dan
+dependency, bukan sertifikasi keamanan, aksesibilitas, atau semua browser.
+
+Bug yang ditemukan dan diperbaiki
+1. Login development: validasi minlength 8 menghalangi password bawaan development
+   yang berisi 5 karakter. Validasi client diselaraskan dengan autentikasi server.
+2. Setelah respons rate limit, form login sebelumnya terus disabled. Sekarang
+   disabled hanya selama request; pembatasan login tetap ditegakkan server.
+3. Kegagalan inisialisasi database pertama membuat promise tersimpan selalu gagal.
+   Promise direset saat gagal sehingga request berikutnya dapat mencoba kembali.
+4. Perubahan judul artikel sebelumnya mengganti slug dan merusak tautan lama.
+   URL artikel sekarang tetap ketika judul diedit.
+5. Judul yang tidak menghasilkan karakter slug Latin berulang mendapat suffix
+   tanpa stem. Fallback kini konsisten: untitled, untitled-2, dan seterusnya.
+6. Dua createPost bersamaan dengan judul sama menimbulkan UNIQUE constraint error.
+   INSERT kini menangani konflik slug secara atomik dan mencoba suffix berikutnya.
+7. ID artikel tidak valid dapat masuk ke driver database. ID bukan bilangan bulat
+   positif yang aman kini diperlakukan sebagai artikel yang tidak ditemukan.
+8. Tag kosong/berulang menghasilkan badge kosong dan key React duplikat. Render
+   tag kini memangkas whitespace, menghapus tag kosong, dan menghapus duplikasi.
+9. Hero, Approach dan AI Playground melampaui frame pada 320x568. Hero, Work,
+   Approach dan Toolkit melampaui frame pada landscape kecil. Spasi, grid,
+   ukuran media, dan breakpoint diperbaiki tanpa mengubah copy.
+10. Writing dengan tiga artikel melampaui satu viewport pada mobile. Preview
+    mendapat pager pada layar compact; desktop tinggi tetap menampilkan tiga
+    artikel. Artikel yang tidak aktif inert dan tidak masuk urutan fokus.
+11. Hash section baru pada homepage yang sudah terpasang tidak memindahkan panel.
+    HomeScrollHandler kini menangani hashchange serta mempertahankan state router
+    dan query string saat membersihkan hash yang sudah ditangani.
+12. Hash transaksi panjang pada artikel membuat dokumen melebar. Pembungkusan teks
+    panjang diperbaiki; blok code tetap memiliki scroll horizontal sendiri.
+13. Judul tab admin menggandakan nama Moudy. Judul child kini memakai template root.
+14. Dimensi metadata OG tidak sesuai gambar asli. Diubah menjadi 1024x571.
+15. Next.js memberi warning terkait CSS smooth scroll. Root html kini memuat
+    data-scroll-behavior sesuai dokumentasi Next.js yang terpasang.
+
+Dependency
+- Next.js dan eslint-config-next: 16.2.10 -> 16.4.1, dikunci exact version.
+- Transitive dependency kompatibel diperbarui menggunakan npm audit fix biasa.
+- npm audit --omit=dev: 0 advisory / 0 paket rentan terlapor.
+- npm audit seluruh dependency: 7 paket terlapor (5 high, 2 moderate), berasal
+  dari dua advisory dependency development:
+  * braces <=3.0.3 melalui rantai ESLint/fast-glob/micromatch:
+    https://github.com/advisories/GHSA-vfj7-8cjw-p6xm
+  * postcss-selector-parser <7.1.6 melalui @tailwindcss/typography:
+    https://github.com/advisories/GHSA-rj75-hqrm-r3gf
+  Perbaikan otomatis yang ditawarkan npm saat audit adalah downgrade major
+  eslint-config-next dan downgrade typography. Tidak diterapkan karena bisa
+  merusak kompatibilitas toolchain. Dua advisory ini masih terbuka pada tooling
+  development/build; hasil production 0 tidak mencakup tooling tersebut.
+- Rilis resmi Next.js: https://github.com/vercel/next.js/releases/tag/v16.4.1
+
+Validasi otomatis
+- npm run build: lolos, termasuk pemeriksaan TypeScript, Next.js 16.4.1.
+- npm run lint: lolos tanpa error/warning.
+- npm test: 9 tes lolos memakai modul server asli dan SQLite sementara:
+  pemulihan inisialisasi DB; slug berulang; penyimpanan bersamaan; normalisasi tag;
+  fallback non-Latin; URL stabil setelah edit; filter/publish draft; ID invalid;
+  penghapusan post dari lookup dan daftar publik.
+- Beberapa tes regresi dibuktikan gagal pada implementasi sebelumnya sebelum fix,
+  termasuk retry DB, slug fallback, URL edit, ID invalid, dan create bersamaan.
+- Perbandingan copy terhadap baseline: 94 blok diperiksa, 0 hilang/berubah.
+- git diff --check: lolos.
+
+Browser dan responsive
+- Production diuji dengan tiga artikel published dan satu draft pada database QA
+  terisolasi. Dengan kondisi tersebut Writing aktif dan jumlah chapter sembilan.
+- Seluruh sembilan chapter: clientHeight = scrollHeight, tanpa overflow horizontal:
+  320x568: frame 503px; 480x320: 255px; 568x320: 255px; 1280x720: 643px.
+- Setiap pemeriksaan: satu panel aktif, panel lain inert, indikator sesuai, kontrol
+  bernama, dan gambar yang tampil berhasil dimuat dengan dimensi natural nonzero.
+- Writing 1440x900: tiga artikel terlihat dan frame 823px; Writing 768x800: 723px.
+  Ketiga halaman pager compact dan tautannya berhasil dipakai.
+- Main preview tanpa post published: delapan chapter. 390x844: semua frame 779px.
+- About 320x568: kedua paragraf dipilih lewat pager, masing-masing muat 503px.
+  Foto tetap memakai rasio intrinsik; 168x94px pada frame terkecil yang diuji.
+- Artikel pada 320, 390, 480px: lebar dokumen sama dengan lebar client, termasuk
+  hash panjang, bare URL panjang, code, tabel, gambar, dan tag duplikat.
+- Ketiga pilihan Work menampilkan proyek yang sesuai; tidak ada gambar gagal.
+- Menu mobile: Escape menutup dan memulihkan fokus; About dari halaman artikel
+  mengarah ke panel benar serta menutup menu.
+- Keyboard Home, PageDown, PageUp, End: sesuai tujuan; permintaan indikator cepat
+  berakhir pada pilihan terakhir dan aria-busy dibersihkan.
+- Tautan hash awal dan perubahan hash saat homepage aktif: sesuai section.
+- Hero ticket loop teramati masuk cycle berikutnya setelah resolved. Pesan Moudy
+  terpanjang diperiksa agar seluruh teks tetap muat pada frame compact.
+- Tema light dan dark diperiksa; preferensi dikembalikan ke system.
+- Console error/warning pada sesi browser production final: kosong.
+
+Route dan lifecycle admin
+- 12 pemeriksaan HTTP production lolos: homepage, daftar artikel, tiga artikel
+  published, draft 404, artikel tidak ada 404, tiga route admin tanpa autentikasi
+  redirect ke login, robots.txt, dan sitemap.xml.
+- Route admin memiliki Cache-Control no-store, no-cache, must-revalidate, private.
+- Draft tidak muncul di isi respons publik maupun sitemap.
+- Login development memakai input keyboard nyata berhasil.
+- Login production berhasil dengan konfigurasi QA sementara dan cookie secure.
+- Rate limit disimulasikan di database QA: respons lock ditolak server; setelah
+  expiry disimulasikan, form yang sama bisa login tanpa reload.
+- Browser admin: create draft -> publish -> buka artikel -> edit judul dengan URL
+  lama tetap 200 -> unpublish menjadi 404 dan hilang dari sitemap -> logout.
+- Sesudah build final, create dengan judul yang sama berhasil mendapat suffix -2.
+- Penghapusan data diuji hanya lewat tes database sementara.
+- Database utama dan artikel asli tidak diubah. Server QA, database QA, dan secret
+  sementara sudah dibersihkan. Dev server utama tetap di http://127.0.0.1:3000/.
+
+Batas pemeriksaan dan tindak lanjut
+- Dua advisory tooling development di atas masih terbuka; cek pembaruan upstream.
+- Tidak menguji koneksi Turso sesungguhnya atau deployment/HTTPS eksternal.
+  Konfigurasi production AUTH_SECRET, ADMIN_PASSWORD dan database belum tersedia
+  di environment lokal utama; pengujian production memakai konfigurasi QA sendiri.
+- Layout menggunakan viewport browser; bukan pengujian perangkat iOS/Android fisik
+  atau seluruh Safari/Firefox. Gesture touch dan reduced motion ditinjau di source,
+  tanpa emulasi preferensi reduced motion pada browser audit ini.
+- Copy artikel arbitrer yang sangat panjang tetap memakai fallback scroll di panel.
+  Satu viewport sudah diverifikasi untuk copy portfolio dan fixture yang diuji;
+  ukuran teks aksesibilitas ekstrem tidak dijanjikan muat tanpa scroll.
+- Tidak ada pengukuran Lighthouse baru atau klaim skor performance.
+- Tidak ada commit, push, atau deployment pada finalisasi ini.
+
+Bukti detail
+Folder artifact lokal:
+/Users/yoga/.codex/visualizations/2026/10/13/01a13540-432c-7542-8480-9dd5c6775ca5/
+portfolio-final-viewport-audit.json
+portfolio-http-results.json
+portfolio-admin-lifecycle.json
+portfolio-audit-production-after.json
+portfolio-audit-all-after.json
+portfolio-final-about-mobile.png
+portfolio-final-hero-desktop.png

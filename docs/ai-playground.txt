@@ -1,0 +1,30 @@
+AI Playground — 2026-10-15
+
+Design read: a personal exploration chapter for potential collaborators, using
+the portfolio's calm, professional visual language. DESIGN_VARIANCE 6 /
+MOTION_INTENSITY 5 / VISUAL_DENSITY 4.
+
+Foundation preserved: DM Sans + Geist Mono, black dark theme and warm cream light
+theme, 8px media corners, the animated viewport deck and all existing copy.
+
+Information architecture: one new chapter after Toolkit, before Writing/Contact.
+AI Playground is linked from the navbar, mobile menu, footer and chapter indicator.
+The existing chapter list supplies the indicator's updated page count. No new
+route is needed for a single published project; project details can grow later.
+
+Content: the user supplied mondaytrade.xyz as their deployed AI project. The
+published website names it Monday and describes an AI trading terminal for Perpl
+with market making, Agentic Trade and TWAP. No individual contribution, results,
+implementation stack or unpublished project details have been inferred.
+
+Preview: a screenshot of https://mondaytrade.xyz/ captured through the browser on
+2026-10-15 (1425×891), optimized to a 63,940-byte WebP without content alterations.
+It is a static product preview, not a live trading interface.
+
+New UI stays server-rendered and uses the existing navigation animation. CSS
+hover feedback respects reduced motion. The preview has intrinsic dimensions,
+a blur placeholder, responsive image sizes and a descriptive alt.
+
+Reviewed installed Next.js guides: Server and Client Components, Image
+Optimization, and CSS. React review: no added hooks, client state, hydration
+work, event listeners or dependencies; external links have safe rel attributes.

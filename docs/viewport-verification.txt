@@ -1,0 +1,155 @@
+Viewport transition verification — 2026-10-13
+
+npm run build: passed
+npm run lint: passed
+git diff --check: passed
+Original copy comparison: 94 blocks checked, 0 missing.
+
+Browser checks:
+- Desktop 1440×900: body height 900; every panel has stage height 821.
+- Mobile 390×844: body height 844; every panel has stage height 775.
+- Small mobile 320×667: body height 667; every panel has stage height 598.
+- No horizontal body overflow at mobile widths.
+- During screen transition, stage scrollTop remains 0. Native animation changes
+  panel transform and opacity; normal document scrolling does not drive motion.
+- A rapid burst of three wheel inputs advances one page, without skipping.
+- Repeated indicator navigation keeps the latest selected destination.
+- Long About content scrolls inside its frame on the smallest viewport; the next
+  gesture at its boundary transitions to the following page.
+- Home keyboard navigation and the article → About route return to the correct page.
+- Ticket animation stays at its initial step while hidden, and resolves after
+  opening its screen.
+
+Touch swipe handlers preserve native content reading, horizontal gallery input,
+and pinch gestures. Viewport emulation checks layout; it does not replace a
+physical touch-device test. Reduced-motion instant navigation and cleanup paths
+were reviewed in source.
+
+Hero ticket update — 2026-10-14
+- The existing animated ticket now replaces the hero portrait.
+- Exactly one ticket component is rendered; the standalone ticket chapter was removed.
+- Hero contains no image element. The remaining portfolio has seven chapters
+  when no writing preview is available; the navigator count follows the chapter list.
+- Desktop 1440×900: hero frame and content both 821px high.
+- Mobile 390×844: hero frame and content both 775px high.
+- Small mobile 320×667: hero frame and content both 598px high.
+- The longest mobile message fits fully: content 170px in a 172px message window.
+- Mobile history controls successfully return to earlier received messages.
+- Original copy comparison: 94 blocks checked, 0 missing.
+- Build, lint, and whitespace checks passed.
+
+Automatic ticket loop and navbar update — 2026-10-14
+- Ticket automatically advances from Resolved through a closing fade and returns
+  to In Progress. Observed cycle counter advancing to 16 without replay clicks.
+- Pause/play and mobile history controls remain available. Pausing during the
+  closing phase restores the resolved view instead of holding an empty message.
+- Message slots retain their size. Desktop entrances use 650–700ms transitions;
+  compact entrances use 620–700ms transitions with a 120ms delay.
+- Navbar groups logo, centered navigation, and right-side controls separately.
+  Active section links follow page navigation.
+- Desktop 1440×900: hero frame and content both 823px; body remains 900px.
+- Mobile 390×844: hero frame and content both 779px; body remains 844px.
+- Small mobile 320×667: hero frame and content both 602px; body remains 667px.
+- Landscape 844×390: hero frame and content both 313px; body remains 390px.
+- No horizontal body overflow at tested viewport widths. Longest message fits
+  fully in each compact message window.
+- Mobile menu overlays the page without increasing the 65px header or body
+  height. Selecting Contact closes the menu and changes the active chapter.
+- Original copy comparison: 94 blocks checked, 0 missing.
+- Final production build, lint, and whitespace checks passed.
+
+Consistent section layouts — 2026-10-15
+- Home remains the reference for the shared palette, spacing, controls and type.
+- Work, About, Approach, Toolkit, Contact and Connect were visually reviewed.
+- For every rendered chapter, panel-scroll scrollHeight equals clientHeight:
+  1440×900 desktop: 823px; 768×800 tablet: 723px;
+  390×844 mobile: 779px; 320×667 small mobile: 602px;
+  844×390 landscape: 313px.
+- All content widths match their scroll widths, with no horizontal overflow.
+- About's previous/next controls reveal both original paragraphs in compact
+  layouts. Desktop exposes both paragraphs and hides the compact controls.
+- Work's selector successfully navigates to Nosana: rail offset 656px at 328px
+  width; selected project matches the displayed card.
+- Approach keeps one disclosure open; switching to Clear Systems retains a
+  602px frame on the smallest tested viewport.
+- Toolkit heading and tool grid share the same 16px left edge at 320px width.
+- Contact reserves space for the longest rotating word in compact layouts.
+- Main deck scrollTop stays 0, preserving animated viewport page navigation.
+- Browser error log: empty. Completed images with failed dimensions: none.
+- Home requests return HTTP 200; local dev server remains on 127.0.0.1:3000.
+- Writing layout was updated in source. No published posts are available in
+  local data, so that conditional chapter was not rendered for browser checks.
+- Original copy comparison: 94 blocks checked, 0 missing.
+- Production build, TypeScript, lint and whitespace checks passed.
+
+Neutral theme palette — 2026-10-15
+- Dark background #0d0d0d; neutral gray cards, borders and message surfaces.
+- Light background #f6f0e6; warm cream surfaces and charcoal foreground.
+- Public theme variables, selection colors and tool-logo canvases are updated.
+- Both light and dark were verified through the existing theme control. The
+  original system preference and automatic ticket playback were restored.
+- At the normal 495×954 preview viewport, all seven chapter frames remain 889px
+  with no vertical overflow; body width and height match the viewport.
+- Body text contrast: light 13.60:1, dark 16.90:1. Muted text on the page
+  background: light 4.84:1, dark 8.17:1.
+- Regenerated stale development stylesheet cache; local preview now serves the
+  new palette on 127.0.0.1:3000.
+- Production build and TypeScript passed. Copy comparison: 94 checked, 0 missing.
+
+Official project imagery — 2026-10-15
+- Replaced generic artwork with official Nansen app, Xai Riftstorm and Nosana
+  workload template images. Sources and framing are in project-image-sources.txt.
+- Three optimized WebP files total 204,462 bytes; all load successfully through
+  Next.js Image in the browser with nonzero natural dimensions.
+- Original artwork brightness filter removed so official colors are preserved.
+- Desktop 1440×900: Work frame 823px, scrollHeight 823px; media 642×342px.
+- Mobile 320×667: Work frame 602px, scrollHeight 602px; body remains 320×667.
+- At the normal 495×954 viewport, Work frame and scrollHeight remain 889px.
+- All three carousel selectors display their respective official images.
+- Local development server restarted to register the newly added public files.
+- Copy comparison: 94 checked, 0 missing. Build, TypeScript, lint and whitespace
+  checks passed.
+
+DM Sans typography — 2026-10-15
+- Browser computed font is "DM Sans", with the medium heading weight, optical
+  sizing and relaxed tracking. Geist Mono remains on metadata and wordmark.
+- Every rendered chapter retains matching frame height and scrollHeight:
+  1440×900: 823px; 390×844: 779px; 320×667: 602px; 844×390: 313px.
+- No horizontal overflow at the tested desktop, mobile and landscape widths.
+- Longest ticket message fits its 170px content window at 320px width.
+- Both About paragraphs remain readable through the compact controls; both
+  display together at desktop width.
+- Black/cream themes, carousel assets and automatic ticket playback preserved.
+- Build, TypeScript, lint, whitespace and 94-block copy comparison passed.
+
+AI Playground — 2026-10-15
+- Added an eighth chapter after Toolkit featuring the user-supplied Monday
+  project, a real website preview and a link to https://mondaytrade.xyz/.
+- Navbar, mobile menu and footer link to the new chapter. Desktop navbar groups
+  remain separate at 768px: identity 50–132px, links 250–518px, actions 547–718px.
+- All eight chapter frames match their scrollHeight, and content widths match
+  scrollWidth: 1440×900 = 823px; 768×800 = 723px; 390×844 = 779px;
+  320×667 = 602px; 844×390 = 313px. No body overflow at these sizes.
+- The AI chapter additionally fits 568×320 landscape in its 255px stage, with
+  matching 506px content width and scrollWidth.
+- Tested the black and warm cream themes, mobile menu close/navigation,
+  Toolkit → AI Playground keyboard navigation and Articles → AI Playground.
+  The active navbar link and indicator follow the new section; deck scrollTop
+  remains 0, retaining animated screen transitions.
+- The project image loads with nonzero natural dimensions at tested widths.
+- Original copy comparison: 94 blocks checked, 0 missing. Production build,
+  TypeScript, lint and whitespace checks passed.
+
+Additional portfolio motion — 2026-10-15
+- Curated title/copy/media entrances and staggered Toolkit/footer items run on
+  chapter entry. Selected project images and captions animate on change.
+- Mobile menu and disclosure entrances, button press/hover and contact arrows
+  use short opacity/transform feedback. Reduced-motion paths remain static.
+- All eight chapter frame heights equal scrollHeight at 1280×720 (643px),
+  320×667 (602px), 390×844 (779px) and 844×390 (313px). No horizontal overflow.
+- Rapid indicator input resolves to Home with no stale motion state or
+  residual transforms. Animated chapter navigation keeps deck scrollTop 0.
+- The menu's 0/40/80/120ms staggers were observed on mobile. Its overlay does
+  not change the 65px header or 667px body at 320×667.
+- /articles menu motion and return to About were verified. See portfolio-motion.txt.
+- Build, TypeScript, lint, whitespace and original 94-block copy check passed.

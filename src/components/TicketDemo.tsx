@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { CaretLeft, CaretRight, Pause, Play } from "@phosphor-icons/react";
+import { useReducedMotion } from "@/components/useReducedMotion";
+import { usePanelVisibility } from "@/components/usePanelVisibility";
+import "./TicketDemo.css";
 
 type Message = {
   from: "user" | "moudy";
@@ -26,89 +30,166 @@ const messages: Message[] = [
   },
 ];
 
-// Timeline: even steps = typing indicator, odd steps = message shown.
-// Step 6 = resolved footer. Then pause and loop.
-const STEP_DURATIONS = [1100, 1400, 1800, 1600, 1100, 1400, 4500];
+// Hold the reply long enough to read, then fade out before starting a new cycle.
+const STEP_DURATIONS = [0, 2700, 900, 4300, 2100, 2000, 3300, 760];
+const compactQuery = "(max-width: 767px), (max-height: 560px)";
 
-export default function TicketDemo() {
-  const [step, setStep] = useState(0);
+function subscribeCompact(onChange: () => void) {
+  const media = window.matchMedia(compactQuery);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+
+export default function TicketDemo({
+  variant = "standard",
+}: {
+  variant?: "standard" | "hero";
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState(1);
+  const [cycle, setCycle] = useState(0);
+  const inView = usePanelVisibility(ref);
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
+  const mobile = useSyncExternalStore(
+    subscribeCompact,
+    () => window.matchMedia(compactQuery).matches,
+    () => false,
+  );
+  const compact = variant === "hero" && mobile;
+  const [preview, setPreview] = useState<{
+    step: number;
+    index: number;
+  } | null>(null);
 
   useEffect(() => {
+    if (reduce || paused || !inView) return;
     const timer = setTimeout(() => {
-      setStep((s) => (s + 1) % STEP_DURATIONS.length);
+      if (step === 7) {
+        setStep(1);
+        setCycle((current) => current + 1);
+        setPreview(null);
+      } else setStep((current) => current + 1);
     }, STEP_DURATIONS[step]);
     return () => clearTimeout(timer);
-  }, [step]);
+  }, [step, reduce, paused, inView]);
 
-  const visibleCount = Math.min(Math.floor((step + 1) / 2), messages.length);
-  const typingFrom: "user" | "moudy" | null =
-    step < 6 && step % 2 === 0 ? messages[step / 2].from : null;
-  const resolved = step >= 6;
+  const resolved = reduce || step >= 6;
+  const closing = !reduce && step === 7;
+  const visibleCount = reduce
+    ? messages.length
+    : Math.min(Math.floor((step + 1) / 2), messages.length);
+  const currentMessage = Math.min(
+    preview?.step === step
+      ? preview.index
+      : reduce && compact
+        ? 1
+        : visibleCount - 1,
+    visibleCount - 1,
+  );
+
+  function viewMessage(index: number) {
+    setPreview({ step, index });
+    setPaused(true);
+  }
 
   return (
-    <div className="w-full rounded-2xl border border-line bg-card p-5 shadow-2xl shadow-black/40">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-line pb-4">
-        <p className="font-mono text-xs uppercase tracking-wider text-muted">
-          TKT-0147 · Priority: High
-        </p>
-        <span
-          className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider transition-colors duration-500 ${
-            resolved
-              ? "border-accent/30 bg-accent-soft text-accent"
-              : "border-amber-400/30 bg-amber-400/10 text-amber-300"
-          }`}
-        >
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              resolved ? "bg-accent" : "animate-pulse bg-amber-300"
-            }`}
-          />
-          {resolved ? "Resolved" : "In Progress"}
+    <div
+      ref={ref}
+      className="ticket-demo"
+      data-variant={variant}
+      data-step={step}
+      data-cycle={cycle}
+      data-cycle-phase={closing ? "closing" : "playing"}
+    >
+      <div className="ticket-header">
+        <p className="ticket-reference">TKT-0147 · Priority: High</p>
+        <span className="ticket-state" aria-live="off">
+          <span key={resolved ? "resolved" : "progress"}>
+            {resolved ? "Resolved" : "In Progress"}
+          </span>
         </span>
       </div>
-
-      {/* Messages */}
-      <div className="mt-4 flex min-h-[280px] flex-col gap-3">
-        {messages.slice(0, visibleCount).map((msg, i) => (
+      <div className="ticket-messages">
+        {messages.map((message, index) => (
           <div
-            key={i}
-            className={`animate-fade-up rounded-xl border p-3.5 text-sm leading-relaxed ${
-              msg.from === "moudy"
-                ? "ml-6 border-accent/20 bg-accent-soft"
-                : "mr-6 border-line bg-background/60"
-            }`}
+            key={index}
+            className={`ticket-message ticket-message-${message.from}`}
+            data-visible={!closing && index < visibleCount}
+            data-current={index === currentMessage}
+            data-past={index < currentMessage}
+            aria-hidden={
+              closing ||
+              index >= visibleCount ||
+              (compact && index !== currentMessage)
+            }
           >
-            <p className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-muted">
-              {msg.from === "moudy" ? (
-                <span className="text-accent">Moudy</span>
-              ) : (
-                "User"
-              )}{" "}
-              · {msg.time}
+            <p className="ticket-sender">
+              {message.from === "moudy" ? "Moudy" : "User"} · {message.time}
             </p>
-            {msg.text}
+            <p>{message.text}</p>
           </div>
         ))}
-
-        {typingFrom && (
+      </div>
+      <div className="ticket-bottom">
+        {variant === "hero" && (
           <div
-            className={`flex w-fit items-center gap-1.5 rounded-xl border p-3.5 ${
-              typingFrom === "moudy"
-                ? "ml-6 self-end border-accent/20 bg-accent-soft"
-                : "mr-6 border-line bg-background/60"
-            }`}
+            className="ticket-history-controls"
+            role="group"
+            aria-label="Ticket messages"
           >
-            <span className="typing-dot h-1.5 w-1.5 rounded-full bg-muted" />
-            <span className="typing-dot h-1.5 w-1.5 rounded-full bg-muted" />
-            <span className="typing-dot h-1.5 w-1.5 rounded-full bg-muted" />
+            <button
+              type="button"
+              aria-label="Previous ticket message"
+              disabled={closing || currentMessage === 0}
+              onClick={() => viewMessage(currentMessage - 1)}
+            >
+              <CaretLeft size={13} aria-hidden="true" />
+            </button>
+            <span aria-hidden="true">
+              {String(currentMessage + 1).padStart(2, "0")} /{" "}
+              {String(visibleCount).padStart(2, "0")}
+            </span>
+            <button
+              type="button"
+              aria-label="Next ticket message"
+              disabled={closing || currentMessage === visibleCount - 1}
+              onClick={() => viewMessage(currentMessage + 1)}
+            >
+              <CaretRight size={13} aria-hidden="true" />
+            </button>
           </div>
         )}
-
-        {resolved && (
-          <p className="animate-fade-up mt-auto pt-2 text-center font-mono text-[11px] uppercase tracking-wider text-accent">
-            ✓ Resolved in 6 min · CSAT ★★★★★
-          </p>
+        <p
+          className="ticket-result"
+          data-visible={resolved && !closing}
+          aria-hidden={!resolved || closing}
+        >
+          ✓ Resolved in 6 min · CSAT ★★★★★
+        </p>
+        {!reduce && (
+          <button
+            type="button"
+            className="animation-control"
+            aria-label={
+              paused ? "Play ticket animation" : "Pause ticket animation"
+            }
+            onClick={() => {
+              if (closing) {
+                setStep(6);
+                setPaused(true);
+              } else {
+                if (paused) setPreview(null);
+                setPaused((value) => !value);
+              }
+            }}
+          >
+            {paused ? (
+              <Play size={14} aria-hidden="true" />
+            ) : (
+              <Pause size={14} aria-hidden="true" />
+            )}
+          </button>
         )}
       </div>
     </div>

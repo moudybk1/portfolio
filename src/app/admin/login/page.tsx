@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import LoginForm from "./LoginForm";
 
-export const metadata = { title: "Admin Login | Moudy" };
+export const metadata = { title: "Admin Login" };
 
 export default async function LoginPage() {
   if (await isAuthenticated()) redirect("/admin");

@@ -5,7 +5,7 @@ import { getPostById } from "@/lib/posts";
 import PostForm from "@/components/PostForm";
 import { updatePostAction } from "../../actions";
 
-export const metadata = { title: "Edit Article | Moudy" };
+export const metadata = { title: "Edit Article" };
 
 type Props = { params: Promise<{ id: string }> };
 

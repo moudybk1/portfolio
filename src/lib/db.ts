@@ -49,7 +49,11 @@ export async function getDb(): Promise<Client> {
           locked_until INTEGER NOT NULL DEFAULT 0
         )`
       );
-    })();
+    })().catch((error: unknown) => {
+      // A temporary connection failure must not poison every later request.
+      schemaReady = null;
+      throw error;
+    });
   }
   await schemaReady;
 

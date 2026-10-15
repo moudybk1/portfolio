@@ -1,0 +1,42 @@
+Footer layout refinement — 2026-10-15
+
+Design read: a calm, professional closing chapter for potential collaborators,
+using the portfolio's existing DM Sans / Geist Mono, neutral black and warm
+cream palette, and restrained motion. DESIGN_VARIANCE 6 / MOTION_INTENSITY 6 /
+VISUAL_DENSITY 3. Original wordmark, copy, destinations and page count retained.
+
+Audit at 1280×720: the old composition used a 64px wordmark and three separate
+columns with 14px links. The brand took a wide column while navigation and
+social links appeared small and disconnected. Footer height was 311.5px inside
+the 643px chapter stage.
+
+New composition:
+- Identity and two-column navigation share the upper row on desktop.
+- Four social profiles form a full-width lower row, with consistent icon space,
+  visible external-link arrows and thin dividers.
+- Mobile puts identity above two compact navigation/profile columns. Every
+  portrait link has a 44px click target; compact landscape uses smaller rows.
+- Copyright sits below the link groups with a quiet, consistent type scale.
+- The same component and proportions are used on Articles and article pages.
+- Footer.module.css owns its visual styles so previous global footer rules do
+  not change the component when navigating between routes.
+- Chapter entrance motion uses stable data attributes, independently of CSS
+  module class names. External-arrow hover feedback respects reduced motion.
+
+Verification:
+- 1280×720: footer 338.7px, chapter frame/scrollHeight 643/643px.
+- 768×800: chapter 723/723px; each profile link fits its 152px column.
+- 320×667: footer 429.7px; chapter 602/602px, content width/scrollWidth 266/266px.
+- 390×844: footer 446.3px; chapter 779/779px; warm cream theme reviewed.
+- 568×320: footer 201.3px; chapter 255/255px, content width/scrollWidth 506/506px.
+  Tightened the landscape spacing after detecting a 4px vertical overflow.
+- Footer navigation opens Articles and returns to Home successfully. Articles
+  uses the same 44px mobile wordmark and all nine destination links.
+- All eight chapters retain the viewport dimensions at the tested portrait
+  sizes. Original copy comparison: 94 checked, zero missing.
+- Production build, TypeScript, lint and whitespace checks pass.
+
+Read installed Next.js CSS / CSS Modules and Server and Client Components
+guides before editing. The footer remains server-rendered, with semantic named
+navigation groups, hidden decorative icons, safe external-link attributes and
+no new dependencies or client state.

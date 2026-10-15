@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans, Geist_Mono } from "next/font/google";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
+import "./typography.css";
+import "./motion.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const portfolioSans = DM_Sans({
+  variable: "--font-portfolio-sans",
   subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -38,8 +44,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: siteConfig.ogImage,
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 571,
         alt: `${siteConfig.name} — Customer Support Specialist`,
       },
     ],
@@ -116,7 +122,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+      className={`${portfolioSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <JsonLd />

@@ -1,16 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { getPostBySlug } from "@/lib/posts";
+import { getPostBySlug, getPostTags } from "@/lib/posts";
 import { siteConfig } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
+
+const markdownComponents: Components = {
+  pre: ({ children }) => <pre tabIndex={0}>{children}</pre>,
+  table: ({ children }) => (
+    <div
+      className="article-table-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label="Article table"
+    >
+      <table>{children}</table>
+    </div>
+  ),
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -56,17 +70,14 @@ export default async function ArticlePage({ params }: Props) {
   if (!post || !post.published) notFound();
 
   return (
-    <>
+    <div className="public-site">
       <Navbar />
-      <main className="flex-1">
-        <article className="mx-auto max-w-3xl px-6 py-20">
-          <Link
-            href="/articles"
-            className="text-sm text-muted transition-colors hover:text-foreground"
-          >
+      <main id="main-content" className="flex-1">
+        <article className="article-container animate-fade-up">
+          <Link href="/articles" className="text-link">
             ← All articles
           </Link>
-          <div className="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs text-muted">
+          <div className="article-meta">
             <span>
               {new Date(post.created_at + "Z").toLocaleDateString("en-US", {
                 year: "numeric",
@@ -74,27 +85,24 @@ export default async function ArticlePage({ params }: Props) {
                 day: "numeric",
               })}
             </span>
-            {post.tags &&
-              post.tags.split(",").map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-accent-soft px-2.5 py-0.5 text-accent"
-                >
-                  {tag.trim()}
-                </span>
-              ))}
+            {getPostTags(post.tags).map((tag) => (
+              <span key={tag} className="article-tag">
+                {tag}
+              </span>
+            ))}
           </div>
-          <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            {post.title}
-          </h1>
-          <div className="prose prose-invert mt-10 max-w-none prose-headings:tracking-tight prose-a:text-accent prose-code:text-accent prose-pre:border prose-pre:border-line prose-pre:bg-card">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <h1 className="article-title">{post.title}</h1>
+          <div className="prose article-prose max-w-none prose-headings:tracking-tight">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={markdownComponents}
+            >
               {post.content}
             </ReactMarkdown>
           </div>
         </article>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

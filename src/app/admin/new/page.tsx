@@ -4,7 +4,7 @@ import { isAuthenticated } from "@/lib/auth";
 import PostForm from "@/components/PostForm";
 import { createPostAction } from "../actions";
 
-export const metadata = { title: "New Article | Moudy" };
+export const metadata = { title: "New Article" };
 
 export default async function NewPostPage() {
   if (!(await isAuthenticated())) redirect("/admin/login");

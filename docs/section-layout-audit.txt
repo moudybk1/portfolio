@@ -1,0 +1,28 @@
+Section layout update — 2026-10-15
+
+Direction: preserve the hero's calm, professional portfolio language for hiring
+and collaboration. Native CSS and existing viewport motion; no new dependencies.
+DESIGN_VARIANCE 6 / MOTION_INTENSITY 5 / VISUAL_DENSITY 4.
+
+Preserved: original copy, Manrope + Geist Mono, olive accent and automatic theme,
+wordmark, 8px media corners, circular controls, pill primary CTA, routes, section
+IDs, metadata, structured data, ticket loop and viewport page transitions.
+
+Before changes at 320×667:
+- Available chapter frame: 602px.
+- About content: 804px; both long paragraphs followed a separate wide photo.
+- Approach content: 767px; statement and disclosure rows exceeded the frame.
+- Inconsistent title sizes (30–84px), image proportions, and spacing.
+
+New compositions:
+- Work: image and description balanced using the hero's column proportions.
+- About: copy first, portrait second; compact layouts read one original paragraph
+  at a time with explicit previous/next controls.
+- Approach: restrained statement and exclusive disclosure rows.
+- Toolkit: open four-column desktop grid and two-column mobile grid.
+- Writing: editorial rows with the shared heading and spacing scale.
+- Contact: shared heading scale, readable copy, quiet contact controls.
+- Connect: proportional identity block and two clear link columns.
+
+User copy preservation overrides skill defaults that would rewrite em dashes,
+shorten copy, rename headings, or remove the existing roles under tool logos.

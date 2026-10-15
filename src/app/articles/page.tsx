@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { listPublishedPosts } from "@/lib/posts";
+import { getPostTags, listPublishedPosts } from "@/lib/posts";
+import Reveal from "@/components/Reveal";
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 
 export const dynamic = "force-dynamic";
 
@@ -26,62 +28,57 @@ export default async function ArticlesPage() {
   const posts = await listPublishedPosts();
 
   return (
-    <>
+    <div className="public-site">
       <Navbar />
-      <main className="flex-1">
-        <div className="mx-auto max-w-3xl px-6 py-20">
-          <p className="font-mono text-sm text-accent">Writing</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Articles
-          </h1>
-          <p className="mt-4 leading-relaxed text-muted">
-            Notes about Web3 support, community, and anything else I feel like
-            writing about.
-          </p>
-
-          <div className="mt-12 space-y-4">
+      <main id="main-content" className="flex-1">
+        <div className="articles-container">
+          <div className="articles-header animate-fade-up">
+            <p className="section-label">Writing</p>
+            <h1>Articles</h1>
+            <p>
+              Notes about Web3 support, community, and anything else I feel like
+              writing about.
+            </p>
+          </div>
+          <div className="articles-list">
             {posts.length === 0 && (
-              <p className="rounded-xl border border-line bg-card p-8 text-center text-muted">
+              <p className="articles-empty">
                 No articles yet. Check back soon.
               </p>
             )}
-            {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/articles/${post.slug}`}
-                className="group block rounded-xl border border-line bg-card p-6 transition-all hover:border-accent/40"
-              >
-                <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-muted">
-                  <span>
-                    {new Date(post.created_at + "Z").toLocaleDateString(
-                      "en-US",
-                      { year: "numeric", month: "long", day: "numeric" }
-                    )}
-                  </span>
-                  {post.tags &&
-                    post.tags.split(",").map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-accent-soft px-2.5 py-0.5 text-accent"
-                      >
-                        {tag.trim()}
+            {posts.map((post, index) => (
+              <Reveal key={post.id} delay={(index % 3) * 50}>
+                <Link
+                  href={`/articles/${post.slug}`}
+                  className="article-preview"
+                >
+                  <div className="article-meta">
+                    <span>
+                      {new Date(post.created_at + "Z").toLocaleDateString(
+                        "en-US",
+                        { year: "numeric", month: "long", day: "numeric" },
+                      )}
+                    </span>
+                    {getPostTags(post.tags).map((tag) => (
+                      <span key={tag} className="article-tag">
+                        {tag}
                       </span>
                     ))}
-                </div>
-                <h2 className="mt-3 text-xl font-semibold leading-snug group-hover:text-accent">
-                  {post.title}
-                </h2>
-                {post.excerpt && (
-                  <p className="mt-2 leading-relaxed text-muted">
-                    {post.excerpt}
-                  </p>
-                )}
-              </Link>
+                  </div>
+                  <h2>
+                    {post.title}
+                    <ArrowUpRight size={23} aria-hidden="true" />
+                  </h2>
+                  {post.excerpt && (
+                    <p className="article-excerpt">{post.excerpt}</p>
+                  )}
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

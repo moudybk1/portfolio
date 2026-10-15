@@ -1,0 +1,81 @@
+/* State changes and interaction feedback share the chapter entrance easing. */
+@media (prefers-reduced-motion: no-preference) {
+  .portfolio-deck .deck-work[data-active="true"]
+    .experience-card[data-selected="true"] .experience-media img,
+  .portfolio-deck .deck-playground[data-active="true"] .playground-preview img {
+    animation: portfolio-media-settle 1100ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .portfolio-deck .deck-work[data-active="true"]
+    .experience-card[data-selected="true"] .experience-brand {
+    animation: portfolio-caption-enter 540ms cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .portfolio-deck .deck-work[data-active="true"]
+    .experience-card[data-selected="true"] .experience-description {
+    animation: portfolio-caption-enter 620ms 80ms cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .portfolio-deck .principle[open] > p {
+    animation: portfolio-disclosure-enter 420ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .public-site .mobile-nav:not([hidden]) {
+    animation: portfolio-menu-enter 320ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .public-site .mobile-nav:not([hidden]) li {
+    animation: portfolio-caption-enter 420ms cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .public-site .mobile-nav li:nth-child(2) { animation-delay: 40ms; }
+  .public-site .mobile-nav li:nth-child(3) { animation-delay: 80ms; }
+  .public-site .mobile-nav li:nth-child(4) { animation-delay: 120ms; }
+  .public-site .contact-arrow svg,
+  .public-site .theme-toggle svg {
+    transition: transform 300ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .public-site .round-control,
+  .public-site .button {
+    transition-timing-function: cubic-bezier(.22, 1, .36, 1);
+  }
+  @media (hover: hover) {
+    .public-site .button:hover {
+      transform: translate3d(0, -2px, 0);
+    }
+  }
+  .public-site .contact-link:hover .contact-arrow svg,
+  .public-site .contact-link:focus-visible .contact-arrow svg {
+    transform: translate(3px, -3px);
+  }
+  .public-site .theme-toggle:hover svg {
+    transform: rotate(18deg);
+  }
+  .public-site .button:active,
+  .public-site .round-control:not(:disabled):active {
+    transform: scale(.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site .button,
+  .public-site .round-control,
+  .public-site .contact-arrow svg,
+  .public-site .theme-toggle svg {
+    transition: none;
+  }
+  .public-site .button:active,
+  .public-site .round-control:active {
+    transform: none;
+  }
+}
+
+@keyframes portfolio-media-settle {
+  from { transform: scale(1.055); }
+  to { transform: scale(1); }
+}
+@keyframes portfolio-caption-enter {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes portfolio-disclosure-enter {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes portfolio-menu-enter {
+  from { opacity: 0; transform: translate3d(0, -8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}

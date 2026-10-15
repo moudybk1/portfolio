@@ -1,0 +1,33 @@
+Official project imagery — 2026-10-15
+
+Replaces the three generic abstract illustrations in the Work gallery.
+The original project descriptions, names, specialties and logos are unchanged.
+These are project-owned public marketing assets used to illustrate the existing
+support experience. They do not imply authorship of the products or artwork.
+
+Nansen AI
+Local file: public/images/project-nansen-app.webp
+Content: official Nansen mobile app / AI research artwork.
+Source page: https://nansen.ai/
+Original image: https://framerusercontent.com/images/kaK0JXNDE3WsrLqtGrMKUWXPmGY.png?height=1080&width=1080
+Framing: 50% 85%; keeps the phone and Nansen name visible in the wide frame.
+
+XAI Games
+Local file: public/images/project-xai-riftstorm.webp
+Content: Riftstorm character key art featured in the Xai gaming ecosystem.
+Source page: https://xai.games/
+Original image: https://a.storyblok.com/f/281520/2505x2505/cca8bb24b2/xai_riftstorm_xai_xai.png/m/fit-in/800x800/filters%3Aquality%28100%29
+Framing: 50% 30%; emphasizes the character group.
+
+Nosana
+Local file: public/images/project-nosana-workloads.webp
+Content: official Nosana workload templates illustration, including ComfyUI,
+WAN video generation and DeepSeek models.
+Source page: https://nosana.com/
+Original image: https://nosana.com/_astro/path1Img.DXTtXtwE.png
+Framing: 50% 65%; keeps the workload cards visible in the wide frame.
+
+Processing: WebP encoding at quality 90, maximum width 1600px, no enlargement.
+Color and content are preserved. Local assets use Next.js Image optimization.
+The former silver artwork brightness filter is disabled for official images.
+Existing 8px corners, viewport frame, carousel controls and theme palette remain.
