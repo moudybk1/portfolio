@@ -34,11 +34,11 @@ Existing 8px corners, viewport frame, carousel controls and theme palette remain
 
 Company logos — 2026-10-24
 
-Logos for the Pyth Data and AELF Chain work entries.
+Logos for the Pyth Data, AELF Chain and ZTX work entries.
 Source: @web3icons/core 4.0.58 (MIT), the PYTH and ELF token icons, rendered
 to 180x180 transparent PNG.
 Local files: public/logos/pyth.png (background variant, white mark on navy,
 so it stays legible in both themes), public/logos/aelf.png (branded variant).
-ZTX has no logo yet; the entry renders with its name only until
-public/logos/ztx.png is added and `logo` is set in src/app/page.tsx.
+public/logos/ztx.png was supplied by the portfolio owner (400x400 original,
+white mark on black), resized to 180x180 without other changes.
 The marks belong to their owners and are used only to identify past employers.

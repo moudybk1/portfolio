@@ -90,6 +90,7 @@ const work = [
   },
   {
     name: "ZTX",
+    logo: "/logos/ztx.png",
     description:
       "Community support for a Web3 virtual world and creator platform, covering onboarding questions and user reports.",
     tags: ["Metaverse", "Community"],
