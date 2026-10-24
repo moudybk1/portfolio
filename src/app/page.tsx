@@ -95,6 +95,13 @@ const work = [
       "Community support for a Web3 virtual world and creator platform, covering onboarding questions and user reports.",
     tags: ["Metaverse", "Community"],
   },
+  {
+    name: "Aurory",
+    logo: "/logos/aurory.png",
+    description:
+      "Community support for a Solana gaming franchise, covering player questions, onboarding and game issues.",
+    tags: ["Gaming", "Player Support"],
+  },
 ];
 
 const contact = {
@@ -116,15 +123,19 @@ const experienceArt = [
     position: "50% 65%",
   },
   {
-    src: "/images/experience-pyth.webp",
+    src: "/images/project-pyth-terminal.webp",
+    position: "0% 50%",
+  },
+  {
+    src: "/images/project-aelf-logo.webp",
     position: "50% 50%",
   },
   {
-    src: "/images/experience-aelf.webp",
+    src: "/images/project-ztx-key-art.webp",
     position: "50% 50%",
   },
   {
-    src: "/images/experience-ztx.webp",
+    src: "/images/project-aurory-seekers.webp",
     position: "50% 50%",
   },
 ];

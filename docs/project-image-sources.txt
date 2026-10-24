@@ -43,24 +43,35 @@ public/logos/ztx.png was supplied by the portfolio owner (400x400 original,
 white mark on black), resized to 180x180 without other changes.
 The marks belong to their owners and are used only to identify past employers.
 
-Generated artwork for Pyth Data, AELF Chain and ZTX — 2026-10-24
+Supplied project imagery — 2026-10-24
 
-Official project imagery could not be downloaded (the official sites and image
-CDNs were blocked in the build environment), so these three work images are
-original illustrations drawn in code (SVG rendered at 1600x900, then encoded
-as WebP at quality 90). They use each project's own colours and its logo, and
-do not show or imply any product screenshot.
+Work images for Pyth Data, AELF Chain, ZTX and Aurory, supplied by the
+portfolio owner. They are public project marketing and key art images used to
+illustrate the existing support experience. They do not imply authorship of the
+products or artwork. WebP quality 90, maximum width 1600px, no enlargement.
 
-public/images/experience-pyth.webp
-  Many thin price feeds converge into one bright aggregated line, on a navy
-  and purple ground (Pyth is a data oracle that aggregates publisher prices).
-public/images/experience-aelf.webp
-  A main chain with side chains branching off, in aelf blue on a pale ground
-  (aelf is a multi-chain network).
-public/images/experience-ztx.webp
-  The supplied ZTX wing mark floating over a perspective grid floor, in black
-  and white (ZTX is a virtual world).
-Framing: 50% 50% for all three; the key content sits in the middle of the frame.
+Pyth Data
+Local file: public/images/project-pyth-terminal.webp
+Content: the "Pyth Terminal" announcement banner. Scaled from 2000px to 1600px
+wide after trimming a one pixel semi-transparent edge.
+Framing: 0% 50%; keeps the headline visible when the frame is cropped on phones.
+
+AELF Chain
+Local file: public/images/project-aelf-logo.webp
+Content: the aelf logo and wordmark. Placed on a white 16:9 canvas at 1.6x so
+no crop of the frame can clip it. Framing: 50% 50%.
+
+ZTX
+Local file: public/images/project-ztx-key-art.webp
+Content: ZTX key art with the wordmark and two avatars. Used as supplied.
+Framing: 50% 50%.
+
+Aurory
+Local file: public/images/project-aurory-seekers.webp
+Content: Aurory key art with the round emblem. Used as supplied.
+Framing: 50% 50%.
+Logo: public/logos/aurory.png is the round emblem cut out of that artwork,
+180x180 with a circular transparent mask.
 
 The earlier abstract artwork (experience-analytics, experience-gaming,
 experience-infrastructure) is no longer referenced by the home page.
