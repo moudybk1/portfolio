@@ -116,15 +116,15 @@ const experienceArt = [
     position: "50% 65%",
   },
   {
-    src: "/images/experience-analytics.webp",
+    src: "/images/experience-pyth.webp",
     position: "50% 50%",
   },
   {
-    src: "/images/experience-infrastructure.webp",
+    src: "/images/experience-aelf.webp",
     position: "50% 50%",
   },
   {
-    src: "/images/experience-gaming.webp",
+    src: "/images/experience-ztx.webp",
     position: "50% 50%",
   },
 ];
