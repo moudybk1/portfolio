@@ -31,3 +31,14 @@ Processing: WebP encoding at quality 90, maximum width 1600px, no enlargement.
 Color and content are preserved. Local assets use Next.js Image optimization.
 The former silver artwork brightness filter is disabled for official images.
 Existing 8px corners, viewport frame, carousel controls and theme palette remain.
+
+Company logos — 2026-10-24
+
+Logos for the Pyth Data and AELF Chain work entries.
+Source: @web3icons/core 4.0.58 (MIT), the PYTH and ELF token icons, rendered
+to 180x180 transparent PNG.
+Local files: public/logos/pyth.png (background variant, white mark on navy,
+so it stays legible in both themes), public/logos/aelf.png (branded variant).
+ZTX has no logo yet; the entry renders with its name only until
+public/logos/ztx.png is added and `logo` is set in src/app/page.tsx.
+The marks belong to their owners and are used only to identify past employers.

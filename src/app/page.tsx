@@ -76,12 +76,14 @@ const work = [
   },
   {
     name: "Pyth Data",
+    logo: "/logos/pyth.png",
     description:
       "Community support for a decentralized price data network, helping users and builders find their way around the ecosystem.",
     tags: ["Oracle", "Community"],
   },
   {
     name: "AELF Chain",
+    logo: "/logos/aelf.png",
     description:
       "Support and community handling for a multi-chain Layer 1 ecosystem, from wallet questions to network updates.",
     tags: ["Layer 1", "Community"],
