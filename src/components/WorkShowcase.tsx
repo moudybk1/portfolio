@@ -7,7 +7,7 @@ import { useReducedMotion } from "@/components/useReducedMotion";
 
 type Experience = {
   name: string;
-  logo: string;
+  logo?: string;
   description: string;
   tags: string[];
   art: string;
@@ -16,8 +16,21 @@ type Experience = {
 
 export default function WorkShowcase({ projects }: { projects: Experience[] }) {
   const rail = useRef<HTMLDivElement>(null);
+  const selectors = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
+
+  // Keep the active tab visible when the tab row scrolls on narrow screens.
+  useEffect(() => {
+    const row = selectors.current;
+    const tab = row?.children[active] as HTMLElement | undefined;
+    if (!row || !tab) return;
+    const left = tab.offsetLeft - (row.children[0] as HTMLElement).offsetLeft;
+    const right = left + tab.offsetWidth;
+    if (left < row.scrollLeft || right > row.scrollLeft + row.clientWidth) {
+      row.scrollTo({ left: left - 12, behavior: reduce ? "instant" : "smooth" });
+    }
+  }, [active, reduce]);
 
   useEffect(() => {
     const element = rail.current;
@@ -60,6 +73,7 @@ export default function WorkShowcase({ projects }: { projects: Experience[] }) {
     >
       <div className="experience-navigation">
         <div
+          ref={selectors}
           className="experience-selectors"
           role="group"
           aria-label="Choose experience"
@@ -122,12 +136,14 @@ export default function WorkShowcase({ projects }: { projects: Experience[] }) {
             </div>
             <div className="experience-caption">
               <div className="experience-brand">
-                <Image
-                  src={project.logo}
-                  alt={`${project.name} logo`}
-                  width={42}
-                  height={42}
-                />
+                {project.logo && (
+                  <Image
+                    src={project.logo}
+                    alt={`${project.name} logo`}
+                    width={42}
+                    height={42}
+                  />
+                )}
                 <h3>{project.name}</h3>
               </div>
               <div className="experience-description">

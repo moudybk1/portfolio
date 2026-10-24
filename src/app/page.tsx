@@ -74,6 +74,24 @@ const work = [
       "Support for decentralized infrastructure users across social and help channels.",
     tags: ["DePIN", "Support Ops"],
   },
+  {
+    name: "Pyth Data",
+    description:
+      "Community support for a decentralized price data network, helping users and builders find their way around the ecosystem.",
+    tags: ["Oracle", "Community"],
+  },
+  {
+    name: "AELF Chain",
+    description:
+      "Support and community handling for a multi-chain Layer 1 ecosystem, from wallet questions to network updates.",
+    tags: ["Layer 1", "Community"],
+  },
+  {
+    name: "ZTX",
+    description:
+      "Community support for a Web3 virtual world and creator platform, covering onboarding questions and user reports.",
+    tags: ["Metaverse", "Community"],
+  },
 ];
 
 const contact = {
@@ -93,6 +111,18 @@ const experienceArt = [
   {
     src: "/images/project-nosana-workloads.webp",
     position: "50% 65%",
+  },
+  {
+    src: "/images/experience-analytics.webp",
+    position: "50% 50%",
+  },
+  {
+    src: "/images/experience-infrastructure.webp",
+    position: "50% 50%",
+  },
+  {
+    src: "/images/experience-gaming.webp",
+    position: "50% 50%",
   },
 ];
 
