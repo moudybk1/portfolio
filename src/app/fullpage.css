@@ -143,6 +143,7 @@ body:has(.portfolio-deck) {
   display: flex;
   gap: 0;
   padding: 0;
+  scroll-padding-inline: 0;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   overflow-x: auto;

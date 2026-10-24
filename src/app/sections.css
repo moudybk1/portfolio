@@ -30,11 +30,18 @@
 .portfolio-deck .experience-selectors {
   gap: 30px;
   min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.portfolio-deck .experience-selectors::-webkit-scrollbar {
+  display: none;
 }
 .portfolio-deck .experience-selectors button {
+  flex: none;
   font-size: 13px;
   border-bottom-width: 1px;
   min-height: 40px;
+  white-space: nowrap;
 }
 .portfolio-deck .deck-work .round-control {
   width: 36px;
