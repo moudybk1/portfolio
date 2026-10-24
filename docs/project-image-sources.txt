@@ -42,3 +42,25 @@ so it stays legible in both themes), public/logos/aelf.png (branded variant).
 public/logos/ztx.png was supplied by the portfolio owner (400x400 original,
 white mark on black), resized to 180x180 without other changes.
 The marks belong to their owners and are used only to identify past employers.
+
+Generated artwork for Pyth Data, AELF Chain and ZTX — 2026-10-24
+
+Official project imagery could not be downloaded (the official sites and image
+CDNs were blocked in the build environment), so these three work images are
+original illustrations drawn in code (SVG rendered at 1600x900, then encoded
+as WebP at quality 90). They use each project's own colours and its logo, and
+do not show or imply any product screenshot.
+
+public/images/experience-pyth.webp
+  Many thin price feeds converge into one bright aggregated line, on a navy
+  and purple ground (Pyth is a data oracle that aggregates publisher prices).
+public/images/experience-aelf.webp
+  A main chain with side chains branching off, in aelf blue on a pale ground
+  (aelf is a multi-chain network).
+public/images/experience-ztx.webp
+  The supplied ZTX wing mark floating over a perspective grid floor, in black
+  and white (ZTX is a virtual world).
+Framing: 50% 50% for all three; the key content sits in the middle of the frame.
+
+The earlier abstract artwork (experience-analytics, experience-gaming,
+experience-infrastructure) is no longer referenced by the home page.
