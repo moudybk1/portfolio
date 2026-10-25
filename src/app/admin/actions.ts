@@ -9,6 +9,8 @@ import {
   verifyAdminPassword,
 } from "@/lib/auth";
 import { createPost, deletePost, updatePost } from "@/lib/posts";
+import { ImageUploadError, saveImage } from "@/lib/media";
+import { isAllowedImageUrl } from "@/lib/media-url";
 import {
   authDelay,
   checkLoginRateLimit,
@@ -68,13 +70,36 @@ async function requireAuth(): Promise<void> {
 }
 
 function postInput(formData: FormData) {
+  const coverImage = String(formData.get("cover_image") || "").trim();
   return {
     title: String(formData.get("title") || "").trim(),
     excerpt: String(formData.get("excerpt") || "").trim(),
     content: String(formData.get("content") || ""),
     tags: String(formData.get("tags") || "").trim(),
+    coverImage: isAllowedImageUrl(coverImage) ? coverImage : "",
     published: formData.get("published") === "on",
   };
+}
+
+export type UploadResult = { url: string } | { error: string };
+
+export async function uploadImageAction(
+  formData: FormData
+): Promise<UploadResult> {
+  await requireAuth();
+  const file = formData.get("file");
+  if (!(file instanceof File)) return { error: "No image was received." };
+  try {
+    const url = await saveImage(
+      new Uint8Array(await file.arrayBuffer()),
+      Number(formData.get("width")),
+      Number(formData.get("height"))
+    );
+    return { url };
+  } catch (error) {
+    if (error instanceof ImageUploadError) return { error: error.message };
+    throw error;
+  }
 }
 
 export async function createPostAction(formData: FormData): Promise<void> {

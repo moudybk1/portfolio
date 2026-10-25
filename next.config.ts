@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Keep the development badge from covering the viewport navigation.
   devIndicators: false,
+  experimental: {
+    serverActions: {
+      // Article images are resized in the browser and capped at 3.5 MB.
+      bodySizeLimit: "4mb",
+    },
+  },
   async headers() {
     return [
       {
