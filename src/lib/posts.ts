@@ -7,6 +7,7 @@ export type Post = {
   excerpt: string;
   content: string;
   tags: string; // comma-separated
+  cover_image: string; // uploaded /media URL, an https URL, or ""
   published: number;
   created_at: string;
   updated_at: string;
@@ -14,6 +15,26 @@ export type Post = {
 
 export function getPostTags(tags: string): string[] {
   return [...new Set(tags.split(",").map((tag) => tag.trim()).filter(Boolean))];
+}
+
+// About 220 words a minute, counting the words of the Markdown source.
+export function readingMinutes(content: string): number {
+  const words = content
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .split(/\s+/)
+    .filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
+  return Math.max(1, Math.round(words / 220));
+}
+
+export function formatPostDate(
+  timestamp: string,
+  month: "long" | "short" = "long"
+): string {
+  return new Date(timestamp + "Z").toLocaleDateString("en-US", {
+    year: "numeric",
+    month,
+    day: "numeric",
+  });
 }
 
 function toPost(row: Record<string, unknown>): Post {
@@ -24,6 +45,7 @@ function toPost(row: Record<string, unknown>): Post {
     excerpt: String(row.excerpt ?? ""),
     content: String(row.content ?? ""),
     tags: String(row.tags ?? ""),
+    cover_image: String(row.cover_image ?? ""),
     published: Number(row.published),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at),
@@ -84,6 +106,7 @@ export type PostInput = {
   excerpt: string;
   content: string;
   tags: string;
+  coverImage?: string;
   published: boolean;
 };
 
@@ -94,8 +117,9 @@ export async function createPost(input: PostInput): Promise<Post> {
     const slug = suffix === 1 ? stem : `${stem}-${suffix}`;
     // Let the unique constraint arbitrate concurrent submissions atomically.
     const result = await db.execute({
-      sql: `INSERT INTO posts (slug, title, excerpt, content, tags, published)
-            VALUES (?, ?, ?, ?, ?, ?)
+      sql: `INSERT INTO posts
+              (slug, title, excerpt, content, tags, cover_image, published)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(slug) DO NOTHING`,
       args: [
         slug,
@@ -103,6 +127,7 @@ export async function createPost(input: PostInput): Promise<Post> {
         input.excerpt,
         input.content,
         input.tags,
+        input.coverImage ?? "",
         input.published ? 1 : 0,
       ],
     });
@@ -121,14 +146,15 @@ export async function updatePost(
   // Keep existing links valid when an article's title changes.
   await db.execute({
     sql: `UPDATE posts
-          SET title = ?, excerpt = ?, content = ?, tags = ?, published = ?,
-              updated_at = datetime('now')
+          SET title = ?, excerpt = ?, content = ?, tags = ?, cover_image = ?,
+              published = ?, updated_at = datetime('now')
           WHERE id = ?`,
     args: [
       input.title,
       input.excerpt,
       input.content,
       input.tags,
+      input.coverImage ?? "",
       input.published ? 1 : 0,
       id,
     ],

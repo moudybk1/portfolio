@@ -232,7 +232,7 @@
 }
 .portfolio-deck .deck-writing .article-preview {
   padding-block: 22px;
-  grid-template-columns: 130px minmax(0, 1fr) 40px;
+  grid-template-columns: 130px minmax(0, 1fr) auto;
   gap: 24px;
 }
 .portfolio-deck .deck-writing .article-preview h3 {
@@ -545,7 +545,7 @@
     font-size: 12px;
   }
   .portfolio-deck .deck-writing .article-preview {
-    grid-template-columns: minmax(0, 1fr) 24px;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
     padding-block: 16px;
   }
