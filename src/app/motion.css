@@ -21,6 +21,27 @@
   .portfolio-deck .principle[open] > p {
     animation: portfolio-disclosure-enter 420ms cubic-bezier(.22, 1, .36, 1);
   }
+  /* Principles open and close by height in CSS alone; browsers without
+     ::details-content keep the plain toggle. */
+  .portfolio-deck .principle {
+    interpolate-size: allow-keywords;
+  }
+  .portfolio-deck .principle::details-content {
+    block-size: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      block-size 480ms cubic-bezier(.22, 1, .36, 1),
+      opacity 320ms ease,
+      content-visibility 480ms allow-discrete;
+  }
+  .portfolio-deck .principle[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+  .portfolio-deck .principle summary h3 {
+    transition: color 300ms ease;
+  }
   .public-site .mobile-nav:not([hidden]) {
     animation: portfolio-menu-enter 320ms cubic-bezier(.22, 1, .36, 1);
   }
