@@ -168,6 +168,7 @@ export default async function Home() {
               <h1 id="home-title" className="deck-hero-title">
                 Great support isn&apos;t a cost. It&apos;s how you keep{" "}
                 <span>people</span>.
+                <span className="hero-cursor" aria-hidden="true" />
               </h1>
               <p className="deck-hero-description">
                 I help teams turn everyday support into loyalty, with empathy,

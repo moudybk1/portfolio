@@ -124,7 +124,6 @@ export default function Navbar() {
           >
             <span className="availability-dot" aria-hidden="true" />
             Open to Work
-            <ArrowUpRight size={15} weight="regular" aria-hidden="true" />
           </SectionLink>
           <ThemeToggle />
           <button

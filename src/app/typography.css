@@ -1,49 +1,58 @@
-/* DM Sans carries the reading and display hierarchy. Geist Mono remains for
-   the wordmark, ticket metadata and chapter controls. */
+/* Type: Wix Madefor Display for headings, Wix Madefor Text for paragraphs,
+   buttons and UI, Geist Mono for the logo, labels and metadata (as in the
+   brand kit). Heading sizes live in the chapter layouts; this layer sets
+   family, weight and tracking. */
 .public-site {
   font-optical-sizing: auto;
   font-kerning: normal;
 }
-.public-site.portfolio-deck .deck-hero-title {
-  font-weight: 500;
-  letter-spacing: -0.045em;
-  line-height: 1.1;
-}
-.public-site.portfolio-deck .deck-heading h2,
-.public-site.portfolio-deck .deck-contact .contact-title {
-  font-weight: 500;
-  letter-spacing: -0.045em;
-}
-.public-site.portfolio-deck .deck-work .experience-brand h3,
-.public-site.portfolio-deck .deck-approach .principle summary h3 {
-  font-weight: 500;
-  letter-spacing: -0.035em;
-}
-.public-site.portfolio-deck .deck-tool h3 {
-  font-weight: 500;
+.public-site :is(
+    .deck-hero-title,
+    .contact-title,
+    .deck-heading h2,
+    .playground-intro h2,
+    .experience-brand h3,
+    .principle summary h3,
+    .playground-project-heading h3,
+    .article-preview h3,
+    .writing-hero h1,
+    .post-title,
+    .post-card-title,
+    .post-more-heading h2,
+    .post-cover-fallback strong,
+    .article-body :is(h2, h3, h4)
+  ) {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
-.public-site .nav-link,
-.public-site .availability-link,
-.public-site .deck-role,
-.public-site .deck-label {
-  font-weight: 500;
+.public-site :is(.deck-hero-title, .contact-title, .writing-hero h1, .post-title) {
+  letter-spacing: -0.03em;
 }
+.public-site .deck-tool h3 {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Labels: Geist Mono in Muted, led by the Coral "~/" prompt. */
+.public-site :is(.deck-label, .deck-role, .writing-eyebrow) {
+  font-family: var(--font-geist-mono), monospace;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+.public-site :is(.deck-label, .deck-role, .writing-eyebrow)::before {
+  content: "~/ ";
+  content: "~/ " / "";
+  color: var(--accent);
+}
+
 .public-site .nav-link {
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
 .public-site .button {
   font-weight: 500;
   letter-spacing: -0.01em;
-}
-.public-site .article-preview h3 {
-  font-weight: 500;
-  letter-spacing: -0.035em;
-}
-@media (max-width: 767px) {
-  .public-site.portfolio-deck .deck-hero-title,
-  .public-site.portfolio-deck .deck-heading h2,
-  .public-site.portfolio-deck .deck-contact .contact-title {
-    letter-spacing: -0.035em;
-  }
 }

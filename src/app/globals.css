@@ -2,13 +2,14 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e7e7ea;
-  --muted: #9b9ba4;
-  --accent: #34d399;
-  --accent-soft: rgba(52, 211, 153, 0.12);
-  --card: #111116;
-  --border: rgba(255, 255, 255, 0.08);
+  --background: #0d0d0d;
+  --foreground: #f0efec;
+  --muted: #a8a8a8;
+  --accent: #ff6b4a;
+  --accent-2: #7c6cff;
+  --accent-soft: rgba(255, 107, 74, 0.12);
+  --card: #161616;
+  --border: #2a2a2a;
 }
 @theme inline {
   --color-background: var(--background);
@@ -48,80 +49,62 @@ button:disabled {
   cursor: default;
 }
 
-/* Editorial foundation: flat surfaces and open space; 8px media corners,
-   circular portraits/controls, pill primary buttons. Layer 30 is navigation. */
+/* moudy brand foundation (brand kit v1.0): Terminal Black ground, Paper text,
+   Voice Coral and Reply Violet as paired accents, 1px lines and no shadows.
+   Dark is the default theme; the toggle switches to the kit's light theme.
+   Layer 30 is navigation. */
 .public-site {
-  --background: #f6f0e6;
-  --foreground: #28241f;
-  --muted: #70685e;
-  --accent: #342e27;
-  --accent-soft: #e9e0d2;
-  --card: #fcf8f1;
-  --surface: #f0e8dc;
-  --border: #d9cebf;
-  --header-background: rgba(246, 240, 230, 0.97);
+  --background: #0d0d0d;
+  --foreground: #f0efec;
+  --muted: #a8a8a8;
+  --accent: #ff6b4a; /* Voice Coral: one emphasised word, active states */
+  --accent-2: #7c6cff; /* Reply Violet: links and focus */
+  --accent-soft: #1e1e1e;
+  --card: #161616;
+  --surface: #1e1e1e;
+  --border: #2a2a2a;
+  --reply: #1b1834;
+  --reply-border: #3a3270;
+  --success: #3dd68c;
+  --header-background: rgba(13, 13, 13, 0.97);
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
   background: var(--background);
   color: var(--foreground);
+  color-scheme: dark;
+}
+.public-site[data-theme="light"] {
+  --background: #f0efec;
+  --foreground: #0d0d0d;
+  --muted: #5c5c5c;
+  --accent: #ad4932; /* coral-700: coral text on a light ground */
+  --accent-2: #5b4be8;
+  --accent-soft: #e8e5df;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --border: #dedbd4;
+  --reply: #f2f0ff;
+  --reply-border: #cdc7ff;
+  --success: #1a7a4c; /* darker Resolved Green for text on light (5.3:1) */
+  --header-background: rgba(240, 239, 236, 0.97);
   color-scheme: light;
 }
 html:has(.public-site),
 body:has(.public-site) {
-  background: #f6f0e6;
+  background: #0d0d0d;
+}
+html:has(.public-site[data-theme="light"]),
+body:has(.public-site[data-theme="light"]) {
+  background: #f0efec;
 }
 .public-site::selection,
 .public-site ::selection {
   background: var(--foreground);
   color: var(--background);
 }
-@media (prefers-color-scheme: dark) {
-  .public-site:not([data-theme="light"]) {
-    --background: #0d0d0d;
-    --foreground: #f0efec;
-    --muted: #a8a8a8;
-    --accent: #e8e5df;
-    --accent-soft: #242424;
-    --card: #151515;
-    --surface: #1c1c1c;
-    --border: #343434;
-    --header-background: rgba(13, 13, 13, 0.97);
-    color-scheme: dark;
-  }
-  html:has(.public-site),
-  body:has(.public-site) {
-    background: #0d0d0d;
-  }
-  .experience-media img {
-    filter: brightness(0.82);
-  }
-}
-.public-site[data-theme="dark"] {
-  --background: #0d0d0d;
-  --foreground: #f0efec;
-  --muted: #a8a8a8;
-  --accent: #e8e5df;
-  --accent-soft: #242424;
-  --card: #151515;
-  --surface: #1c1c1c;
-  --border: #343434;
-  --header-background: rgba(13, 13, 13, 0.97);
-  color-scheme: dark;
-}
-html:has(.public-site[data-theme="light"]),
-body:has(.public-site[data-theme="light"]) {
-  background: #f6f0e6;
-}
-html:has(.public-site[data-theme="dark"]),
-body:has(.public-site[data-theme="dark"]) {
-  background: #0d0d0d;
-}
-.public-site[data-theme="light"] .experience-media img {
-  filter: none;
-}
-.public-site[data-theme="dark"] .experience-media img {
-  filter: brightness(0.82);
+.public-site :focus-visible {
+  outline-color: var(--accent-2);
 }
 .theme-toggle {
   display: flex;
@@ -296,13 +279,11 @@ body:has(.public-site[data-theme="dark"]) {
   color: var(--background);
 }
 .button-secondary {
-  padding-block: 8px;
-  min-height: 40px;
-  border-radius: 0;
+  border: 1px solid var(--border);
   color: var(--foreground);
 }
 .button-secondary:hover {
-  color: var(--accent);
+  border-color: var(--foreground);
 }
 .button svg,
 .text-link {
@@ -326,8 +307,8 @@ body:has(.public-site[data-theme="dark"]) {
   text-decoration-color: var(--border);
 }
 .text-link:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
+  color: var(--accent-2);
+  text-decoration-color: var(--accent-2);
 }
 .hero-writing {
   justify-self: center;
@@ -410,7 +391,7 @@ body:has(.public-site[data-theme="dark"]) {
   position: relative;
   overflow: hidden;
   aspect-ratio: 1.95;
-  border-radius: 8px;
+  border-radius: 14px;
   background: var(--surface);
 }
 .experience-media img {
@@ -438,8 +419,6 @@ body:has(.public-site[data-theme="dark"]) {
 }
 .experience-brand h3 {
   font-size: 29px;
-  font-weight: 500;
-  letter-spacing: -0.06em;
 }
 .experience-description > p {
   max-width: 420px;
@@ -454,7 +433,7 @@ body:has(.public-site[data-theme="dark"]) {
   margin-top: 17px;
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
-  color: var(--accent);
+  color: var(--muted);
 }
 .work-tags li + li {
   padding-left: 17px;
@@ -526,8 +505,6 @@ body:has(.public-site[data-theme="dark"]) {
 }
 .principle summary h3 {
   font-size: 35px;
-  font-weight: 500;
-  letter-spacing: -0.05em;
 }
 .principle summary svg {
   color: var(--muted);
@@ -549,8 +526,8 @@ body:has(.public-site[data-theme="dark"]) {
 .ticket-demo {
   background: var(--card);
   border: 1px solid var(--border);
-  padding: 28px;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 14px;
 }
 .ticket-header {
   display: flex;
@@ -565,13 +542,30 @@ body:has(.public-site[data-theme="dark"]) {
   font-size: 10px;
   color: var(--muted);
 }
+/* Status badge: a dot in the status colour, Coral while open, green once resolved. */
 .ticket-state {
-  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
-  color: var(--accent);
-  background: var(--accent-soft);
+  color: var(--muted);
+  border: 1px solid var(--border);
   border-radius: 999px;
   white-space: nowrap;
+}
+.ticket-state::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.ticket-state[data-resolved="true"]::before {
+  background: var(--success);
 }
 .ticket-messages {
   display: flex;
@@ -582,7 +576,7 @@ body:has(.public-site[data-theme="dark"]) {
 .ticket-message {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 14px 16px;
   font-size: 12px;
   line-height: 1.85;
@@ -598,18 +592,17 @@ body:has(.public-site[data-theme="dark"]) {
 .ticket-message-user {
   margin-right: 30px;
 }
+/* Two voices: the user's message on a neutral surface, the reply in violet. */
 .ticket-message-moudy {
   margin-left: 30px;
-  background: var(--accent-soft);
+  background: var(--reply);
+  border-color: var(--reply-border);
 }
 .ticket-sender {
   font-family: var(--font-geist-mono), monospace;
   font-size: 9px;
   color: var(--muted);
   margin-bottom: 5px;
-}
-.ticket-message-moudy .ticket-sender {
-  color: var(--accent);
 }
 .ticket-bottom {
   display: flex;
@@ -620,12 +613,45 @@ body:has(.public-site[data-theme="dark"]) {
   margin-top: 14px;
 }
 .ticket-result {
-  color: var(--accent);
+  color: var(--success);
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
 }
 .ticket-result[data-visible="false"] {
   visibility: hidden;
+}
+/* The typing line and the result share one slot, so the card never shifts. */
+.ticket-status {
+  display: grid;
+  min-width: 0;
+}
+.ticket-status > * {
+  grid-area: 1 / 1;
+}
+.ticket-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  transition:
+    opacity 300ms ease,
+    visibility 300ms;
+}
+.ticket-typing[data-visible="false"] {
+  opacity: 0;
+  visibility: hidden;
+}
+/* Two voices: Violet while moudy types, Coral while the user types. */
+.ticket-typing-cursor {
+  width: 0.55em;
+  height: 1.1em;
+  border-radius: 1px;
+  background: var(--accent-2);
+}
+.ticket-typing[data-from="user"] .ticket-typing-cursor {
+  background: var(--accent);
 }
 .animation-control {
   display: inline-flex;
@@ -639,8 +665,8 @@ body:has(.public-site[data-theme="dark"]) {
   color: var(--muted);
 }
 .animation-control:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-2);
+  color: var(--accent-2);
 }
 
 .toolkit-section {
@@ -735,14 +761,12 @@ body:has(.public-site[data-theme="dark"]) {
   padding-top: 8px;
 }
 .article-preview h3 {
-  font-size: 33px;
+  font-size: 32px;
   line-height: 1.3;
-  font-weight: 500;
-  letter-spacing: -0.055em;
   transition: color 0.2s;
 }
 .article-preview:hover h3 {
-  color: var(--accent);
+  color: var(--accent-2);
 }
 .article-excerpt {
   max-width: 650px;
@@ -773,10 +797,8 @@ body:has(.public-site[data-theme="dark"]) {
   scroll-margin-top: 104px;
 }
 .contact-title {
-  font-size: clamp(40px, 7.4vw, 112px);
+  font-size: clamp(38px, 7.04vw, 107px);
   line-height: 1.15;
-  letter-spacing: -0.07em;
-  font-weight: 500;
 }
 .contact-title-ending {
   display: block;
@@ -907,7 +929,7 @@ body:has(.public-site[data-theme="dark"]) {
   transition: color 0.2s;
 }
 .footer-links a:hover {
-  color: var(--accent);
+  color: var(--accent-2);
 }
 .footer-socials a svg:last-child {
   display: none;
@@ -1229,7 +1251,6 @@ body:has(.public-site[data-theme="dark"]) {
   }
   .button-secondary {
     min-width: 140px;
-    padding-inline: 6px;
   }
   .hero-writing {
     margin: 8px 0 0;
@@ -1385,7 +1406,7 @@ body:has(.public-site[data-theme="dark"]) {
     font-size: 10px;
   }
   .article-preview h3 {
-    font-size: 25px;
+    font-size: 24px;
   }
   .article-excerpt {
     font-size: 13px;
@@ -1403,8 +1424,7 @@ body:has(.public-site[data-theme="dark"]) {
     scroll-margin-top: 92px;
   }
   .contact-title {
-    font-size: clamp(34px, 7vw, 54px);
-    letter-spacing: -0.06em;
+    font-size: clamp(32px, 6.65vw, 51px);
     line-height: 1.2;
   }
   .typing-control {
@@ -1493,11 +1513,9 @@ body:has(.public-site[data-theme="dark"]) {
   .button {
     padding-inline: 17px;
   }
-  .button-secondary {
-    padding-inline: 3px;
-  }
+
   .contact-title {
-    font-size: 28px;
+    font-size: 26px;
   }
   .ticket-demo {
     padding: 16px;
