@@ -1,16 +1,24 @@
-import type { Metadata } from "next";
-import { DM_Sans, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist_Mono, Wix_Madefor_Display, Wix_Madefor_Text } from "next/font/google";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 import "./typography.css";
 import "./motion.css";
 
-const portfolioSans = DM_Sans({
+// Wix Madefor Text for reading and UI, Wix Madefor Display for headings;
+// Geist Mono stays for the logo, labels and ticket metadata.
+const portfolioSans = Wix_Madefor_Text({
   variable: "--font-portfolio-sans",
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
-  axes: ["opsz"],
+  display: "swap",
+});
+
+const display = Wix_Madefor_Display({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "variable",
   display: "swap",
 });
 
@@ -23,9 +31,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.title,
-    template: `%s | ${siteConfig.name}`,
+    template: "%s · moudy",
   },
   description: siteConfig.description,
+  manifest: "/site.webmanifest",
   keywords: [...siteConfig.keywords],
   authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
@@ -38,24 +47,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: siteConfig.locale,
     url: siteConfig.url,
-    siteName: siteConfig.name,
+    siteName: "moudy",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [
-      {
-        url: siteConfig.ogImage,
-        width: 1024,
-        height: 571,
-        alt: `${siteConfig.name} — Customer Support Specialist`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
     creator: `@${siteConfig.twitter}`,
-    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
@@ -70,6 +70,8 @@ export const metadata: Metadata = {
   },
   category: "portfolio",
 };
+
+export const viewport: Viewport = { themeColor: "#0D0D0D" };
 
 function JsonLd() {
   const person = {
@@ -123,7 +125,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${portfolioSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${portfolioSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <JsonLd />

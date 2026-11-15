@@ -1,5 +1,10 @@
 /* State changes and interaction feedback share the chapter entrance easing. */
 @media (prefers-reduced-motion: no-preference) {
+  /* Cursors blink like the brand kit's terminal cursor. */
+  .public-site .hero-cursor,
+  .public-site .ticket-typing-cursor {
+    animation: portfolio-cursor-blink 1.1s steps(1) infinite;
+  }
   .portfolio-deck .deck-work[data-active="true"]
     .experience-card[data-selected="true"] .experience-media img,
   .portfolio-deck .deck-playground[data-active="true"] .playground-preview img {
@@ -63,6 +68,9 @@
   }
 }
 
+@keyframes portfolio-cursor-blink {
+  50% { opacity: 0; }
+}
 @keyframes portfolio-media-settle {
   from { transform: scale(1.055); }
   to { transform: scale(1); }

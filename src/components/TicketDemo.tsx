@@ -31,7 +31,8 @@ const messages: Message[] = [
 ];
 
 // Hold the reply long enough to read, then fade out before starting a new cycle.
-const STEP_DURATIONS = [0, 2700, 900, 4300, 2100, 2000, 3300, 760];
+// Steps 2 and 4 are the pauses before a reply, shown as "is typing".
+const STEP_DURATIONS = [0, 2700, 1800, 4300, 2100, 2000, 3300, 760];
 const compactQuery = "(max-width: 767px), (max-height: 560px)";
 
 function subscribeCompact(onChange: () => void) {
@@ -75,6 +76,8 @@ export default function TicketDemo({
   }, [step, reduce, paused, inView]);
 
   const resolved = reduce || step >= 6;
+  const typing = !reduce && !paused && (step === 2 || step === 4);
+  const typist = step < 4 ? "moudy" : "user";
   const closing = !reduce && step === 7;
   const visibleCount = reduce
     ? messages.length
@@ -104,7 +107,11 @@ export default function TicketDemo({
     >
       <div className="ticket-header">
         <p className="ticket-reference">TKT-0147 · Priority: High</p>
-        <span className="ticket-state" aria-live="off">
+        <span
+          className="ticket-state"
+          data-resolved={resolved}
+          aria-live="off"
+        >
           <span key={resolved ? "resolved" : "progress"}>
             {resolved ? "Resolved" : "In Progress"}
           </span>
@@ -125,7 +132,7 @@ export default function TicketDemo({
             }
           >
             <p className="ticket-sender">
-              {message.from === "moudy" ? "Moudy" : "User"} · {message.time}
+              {message.from === "moudy" ? "moudy" : "User"} · {message.time}
             </p>
             <p>{message.text}</p>
           </div>
@@ -160,13 +167,24 @@ export default function TicketDemo({
             </button>
           </div>
         )}
-        <p
-          className="ticket-result"
-          data-visible={resolved && !closing}
-          aria-hidden={!resolved || closing}
-        >
-          ✓ Resolved in 6 min · CSAT ★★★★★
-        </p>
+        <div className="ticket-status">
+          <p
+            className="ticket-typing"
+            data-visible={typing}
+            data-from={typist}
+            aria-hidden="true"
+          >
+            {typist === "moudy" ? "moudy" : "User"} is typing
+            <span className="ticket-typing-cursor" />
+          </p>
+          <p
+            className="ticket-result"
+            data-visible={resolved && !closing}
+            aria-hidden={!resolved || closing}
+          >
+            ✓ Resolved in 6 min · CSAT ★★★★★
+          </p>
+        </div>
         {!reduce && (
           <button
             type="button"
