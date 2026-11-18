@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Keep the development badge from covering the viewport navigation.
   devIndicators: false,
+  images: {
+    // Cloudflare's optimizer only reads static files, so uploads under /media
+    // would 404 through it. The static images are already small webp files.
+    // ponytail: uploads ship at upload size (max 2000px); add Cloudflare Images if article pages get heavy.
+    unoptimized: true,
+  },
   experimental: {
     serverActions: {
       // Article images are resized in the browser and capped at 3.5 MB.
