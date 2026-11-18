@@ -8,6 +8,11 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "moudy.xyz", "custom_domain": true },
+    { "pattern": "www.moudy.xyz", "custom_domain": true }
+  ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
