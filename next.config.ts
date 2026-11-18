@@ -29,6 +29,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Same two-year HSTS that Vercel sent, so browsers keep forcing HTTPS.
+        source: "/:path*",
+        headers: [
+          { key: "Strict-Transport-Security", value: "max-age=63072000" },
+        ],
+      },
+      {
         source: "/admin/:path*",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
