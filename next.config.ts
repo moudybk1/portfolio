@@ -15,6 +15,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "4mb",
     },
   },
+  // The canonical URL, sitemap and Open Graph tags all name the bare domain.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.moudy.xyz" }],
+        destination: "https://moudy.xyz/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
