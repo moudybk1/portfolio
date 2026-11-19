@@ -114,10 +114,16 @@ export default function PostForm({ post, action, submitLabel }: Props) {
   }
 
   // Replace the selection, then select `select` (offsets in the new text).
+  // A new value puts the caret at the end and focusing scrolls to it, so the
+  // view is put back where the writer was.
   function edit(start: number, end: number, text: string, select: [number, number]) {
+    const area = editor.current;
+    if (!area) return;
+    const { scrollTop } = area;
     flushSync(() => setContent(content.slice(0, start) + text + content.slice(end)));
-    editor.current?.focus();
-    editor.current?.setSelectionRange(...select);
+    area.focus({ preventScroll: true });
+    area.setSelectionRange(...select);
+    area.scrollTop = scrollTop;
   }
 
   function wrap(before: string, after = before) {
