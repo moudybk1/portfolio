@@ -84,26 +84,26 @@ export default async function ArticlePage({ params }: Props) {
               <ArrowLeft size={16} aria-hidden="true" />
               All articles
             </Link>
-            <p className="post-meta">
-              <time dateTime={post.created_at.replace(" ", "T") + "Z"}>
-                {formatPostDate(post.created_at)}
-              </time>
-              <span aria-hidden="true">·</span>
-              <span>{readingMinutes(post.content)} min read</span>
-            </p>
             <h1 className="post-title">{post.title}</h1>
             {post.excerpt && <p className="post-lede">{post.excerpt}</p>}
-            {tags.length > 0 && (
-              <ul className="post-tags" aria-label="Topics">
-                {tags.map((tag) => (
-                  <li key={tag}>
-                    <Link href={`/articles?tag=${encodeURIComponent(tag)}`}>
-                      {tag}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="post-byline">
+              <Image
+                src="/images/moudy-portrait.webp"
+                alt=""
+                width={44}
+                height={44}
+              />
+              <div>
+                <p>{siteConfig.name}</p>
+                <p className="post-meta">
+                  <time dateTime={post.created_at.replace(" ", "T") + "Z"}>
+                    {formatPostDate(post.created_at)}
+                  </time>
+                  <span aria-hidden="true">·</span>
+                  <span>{readingMinutes(post.content)} min read</span>
+                </p>
+              </div>
+            </div>
           </header>
 
           {post.cover_image && (
@@ -127,6 +127,17 @@ export default async function ArticlePage({ params }: Props) {
           <ArticleBody content={post.content} />
 
           <footer className="post-footer">
+            {tags.length > 0 && (
+              <ul className="post-tags" aria-label="Topics">
+                {tags.map((tag) => (
+                  <li key={tag}>
+                    <Link href={`/articles?tag=${encodeURIComponent(tag)}`}>
+                      {tag}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="post-author">
               <Image
                 src="/images/moudy-portrait.webp"

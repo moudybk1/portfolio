@@ -1,8 +1,20 @@
 import Image from "next/image";
+import { Source_Serif_4 } from "next/font/google";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { ElementContent } from "hast";
 import { parseMediaUrl } from "@/lib/media-url";
+import { splitParagraphs } from "@/lib/markdown";
+
+// A book face for long reading; headings and UI keep the site's sans.
+const serif = Source_Serif_4({
+  variable: "--font-reading",
+  subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+});
 
 const isImage = (child: ElementContent) =>
   child.type === "element" && child.tagName === "img";
@@ -29,7 +41,7 @@ const components: Components = {
             alt={alt ?? ""}
             width={media.width}
             height={media.height}
-            sizes="(max-width: 767px) calc(100vw - 40px), 720px"
+            sizes="(max-width: 767px) calc(100vw - 40px), 840px"
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element -- external URLs are not optimized
@@ -62,9 +74,9 @@ const components: Components = {
 
 export default function ArticleBody({ content }: { content: string }) {
   return (
-    <div className="article-body">
+    <div className={`article-body ${serif.variable}`}>
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {content}
+        {splitParagraphs(content)}
       </ReactMarkdown>
     </div>
   );

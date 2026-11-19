@@ -287,20 +287,23 @@
 }
 
 /* Article ---------------------------------------------------------------- */
+/* One 680px reading column; the cover and in-text images may run wider. */
 .post {
   width: min(100% - 112px, 1040px);
   margin-inline: auto;
-  padding-block: 72px 112px;
+  padding-block: 64px 112px;
 }
-.post-header {
-  max-width: 720px;
+.post-header,
+.post-footer,
+.post > .article-body {
+  max-width: 680px;
   margin-inline: auto;
 }
 .post-back {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 52px;
+  margin-bottom: 48px;
   color: var(--muted);
   font-size: 13px;
   transition: color 0.2s;
@@ -314,60 +317,76 @@
 .post-back:hover svg {
   transform: translateX(-3px);
 }
-.post-header .post-meta {
-  margin-bottom: 20px;
-}
 .post-title {
-  font-size: clamp(40px, 5.2vw, 64px);
+  font-size: clamp(34px, 4.2vw, 48px);
   font-weight: 500;
-  letter-spacing: -0.05em;
-  line-height: 1.06;
+  letter-spacing: -0.03em;
+  line-height: 1.14;
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
 .post-lede {
-  margin-top: 24px;
+  margin-top: 16px;
   color: var(--muted);
   font-size: 20px;
-  line-height: 1.6;
+  line-height: 1.5;
   text-wrap: pretty;
 }
-.post-header .post-tags {
-  margin-top: 28px;
+.post-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+.post-byline img,
+.post-author img {
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+.post-byline img {
+  width: 44px;
+  height: 44px;
+}
+.post-byline p:first-child {
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 500;
 }
 .post-hero {
-  margin-top: 56px;
+  margin-top: 40px;
 }
 .post-hero img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 640px;
+  max-height: 600px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--surface);
 }
 .post > .article-body {
-  margin: 56px auto 0;
+  margin-top: 40px;
 }
 .post-footer {
-  max-width: 720px;
-  margin: 72px auto 0;
-  padding-top: 36px;
-  border-top: 1px solid var(--border);
+  margin-top: 64px;
+}
+.post-footer .post-tags {
+  margin-bottom: 40px;
 }
 .post-author {
   display: flex;
   align-items: center;
   gap: 16px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
 }
 .post-author img {
-  flex-shrink: 0;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: 50% 20%;
 }
 .post-author div {
   flex: 1;
@@ -426,41 +445,44 @@
 }
 
 /* Article body (also the admin preview) ----------------------------------- */
+/* Serif prose at 20px, about 70 characters a line, sans headings. */
 .article-body {
-  max-width: 720px;
-  color: color-mix(in srgb, var(--foreground) 86%, var(--background));
-  font-size: 18px;
-  line-height: 1.8;
+  max-width: 680px;
+  color: color-mix(in srgb, var(--foreground) 90%, var(--background));
+  font-family: var(--font-reading), Georgia, serif;
+  font-size: 20px;
+  font-optical-sizing: auto;
+  line-height: 1.7;
   overflow-wrap: anywhere;
 }
 .article-body > * + * {
-  margin-top: 1.3em;
+  margin-top: 1.6em;
 }
 .article-body h2,
 .article-body h3,
 .article-body h4 {
   color: var(--foreground);
-  font-weight: 500;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
   line-height: 1.25;
   text-wrap: balance;
 }
 .article-body h2 {
-  margin-top: 2.1em;
-  font-size: 30px;
-  letter-spacing: -0.035em;
+  margin-top: 2em;
+  font-size: 28px;
+  letter-spacing: -0.02em;
 }
 .article-body h3 {
   margin-top: 1.8em;
-  font-size: 23px;
-  letter-spacing: -0.025em;
+  font-size: 22px;
+  letter-spacing: -0.015em;
 }
 .article-body h4 {
   margin-top: 1.6em;
   font-size: 19px;
-  font-weight: 600;
 }
 .article-body > :is(h2, h3, h4) + * {
-  margin-top: 0.65em;
+  margin-top: 0.5em;
 }
 .article-body > :first-child {
   margin-top: 0;
@@ -478,11 +500,11 @@
 }
 .article-body strong {
   color: var(--foreground);
-  font-weight: 600;
+  font-weight: 650;
 }
 .article-body ul,
 .article-body ol {
-  padding-left: 1.35em;
+  padding-left: 1.4em;
 }
 .article-body ul {
   list-style: disc;
@@ -490,9 +512,15 @@
 .article-body ol {
   list-style: decimal;
 }
+.article-body li {
+  padding-left: 0.2em;
+}
 .article-body li + li,
 .article-body li > :is(ul, ol) {
-  margin-top: 0.5em;
+  margin-top: 0.6em;
+}
+.article-body li > p + p {
+  margin-top: 0.6em;
 }
 .article-body li::marker {
   color: var(--muted);
@@ -507,17 +535,22 @@
   border-left: 2px solid var(--foreground);
   padding: 2px 0 2px 24px;
   color: var(--foreground);
-  font-size: 21px;
-  letter-spacing: -0.01em;
-  line-height: 1.6;
+  font-style: italic;
 }
 .article-body blockquote > * + * {
   margin-top: 0.8em;
 }
 .article-body hr {
-  margin-block: 2.6em;
+  margin-block: 2.4em;
   border: 0;
-  border-top: 1px solid var(--border);
+  text-align: center;
+}
+/* A quiet three-dot break between sections. */
+.article-body hr::before {
+  content: "···";
+  color: var(--muted);
+  font-size: 24px;
+  letter-spacing: 0.6em;
 }
 .article-body code {
   border: 1px solid var(--border);
@@ -525,7 +558,7 @@
   padding: 0.12em 0.4em;
   background: var(--surface, var(--card));
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.84em;
+  font-size: 0.8em;
 }
 .article-body pre {
   overflow-x: auto;
@@ -549,6 +582,7 @@
 .article-body table {
   width: 100%;
   border-collapse: collapse;
+  font-family: var(--font-portfolio-sans), sans-serif;
   font-size: 15px;
   line-height: 1.6;
 }
@@ -566,7 +600,7 @@
   border-bottom-color: color-mix(in srgb, var(--foreground) 45%, transparent);
 }
 .article-body .article-figure {
-  margin-block: 2.2em;
+  margin-block: 2em;
 }
 .article-figure img {
   display: block;
@@ -578,10 +612,17 @@
 .article-figure figcaption {
   margin-top: 12px;
   color: var(--muted);
+  font-family: var(--font-portfolio-sans), sans-serif;
   font-size: 14px;
   line-height: 1.5;
   text-align: center;
   text-wrap: pretty;
+}
+/* On wide screens, images step out of the text column a little. */
+@media (min-width: 1000px) {
+  .post .article-figure {
+    margin-inline: -80px;
+  }
 }
 
 @media (max-width: 1279px) {
@@ -655,38 +696,42 @@
     font-size: 22px;
   }
   .post {
-    padding-block: 44px 80px;
+    padding-block: 40px 80px;
   }
   .post-back {
-    margin-bottom: 36px;
+    margin-bottom: 32px;
   }
   .post-title {
-    font-size: 38px;
+    font-size: 32px;
   }
   .post-lede {
-    font-size: 17px;
+    font-size: 18px;
+  }
+  .post-byline {
+    margin-top: 24px;
+    padding-bottom: 24px;
   }
   .post-hero {
-    margin-top: 36px;
+    margin-top: 28px;
   }
   .post-hero img {
     border-radius: 8px;
   }
   .post > .article-body {
-    margin-top: 40px;
+    margin-top: 32px;
   }
   .article-body {
-    font-size: 16.5px;
+    font-size: 18px;
+    line-height: 1.65;
   }
   .article-body h2 {
-    font-size: 25px;
+    font-size: 23px;
   }
   .article-body h3 {
-    font-size: 20px;
+    font-size: 19px;
   }
   .article-body blockquote {
     padding-left: 18px;
-    font-size: 18px;
   }
   .article-body pre {
     padding: 14px 16px;

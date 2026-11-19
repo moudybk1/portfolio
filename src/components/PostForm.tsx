@@ -6,7 +6,9 @@ import {
   useState,
   type ClipboardEvent,
   type DragEvent,
+  type KeyboardEvent,
 } from "react";
+import { flushSync } from "react-dom";
 import ArticleBody from "@/components/ArticleBody";
 import type { Post } from "@/lib/posts";
 import { uploadImageAction } from "@/app/admin/actions";
@@ -40,11 +42,24 @@ function altFromName(file: File): string {
   return /^(image|img|screenshot|untitled)?\s*\d*$/i.test(name) ? "" : name;
 }
 
+const TOOLS = [
+  ["Heading", "Make the line a section heading", "## "],
+  ["B", "Bold (⌘B)", "**"],
+  ["I", "Italic (⌘I)", "*"],
+  ["Quote", "Quote", "> "],
+  ["List", "Bulleted list", "- "],
+  ["Link", "Link (⌘K)", "link"],
+] as const;
+
 const imagesIn = (files: FileList | null | undefined) =>
   [...(files ?? [])].filter((file) => file.type.startsWith("image/"));
 
 export default function PostForm({ post, action, submitLabel }: Props) {
-  const [content, setContent] = useState(post?.content ?? "");
+  // Forms submit line breaks as \r\n, but the textarea counts its cursor
+  // positions over \n, so the text is kept in that form while editing.
+  const [content, setContent] = useState(
+    (post?.content ?? "").replace(/\r\n?/g, "\n")
+  );
   const [cover, setCover] = useState(post?.cover_image ?? "");
   const [tab, setTab] = useState<"write" | "preview">("write");
   const [uploads, setUploads] = useState(0);
@@ -53,6 +68,7 @@ export default function PostForm({ post, action, submitLabel }: Props) {
   const editor = useRef<HTMLTextAreaElement>(null);
   const contentPicker = useRef<HTMLInputElement>(null);
   const coverPicker = useRef<HTMLInputElement>(null);
+  const batches = useRef(0);
 
   async function track<T>(work: Promise<T>): Promise<T | undefined> {
     setUploads((count) => count + 1);
@@ -78,7 +94,7 @@ export default function PostForm({ post, action, submitLabel }: Props) {
     setError("");
     setTab("write");
     const at = editor.current?.selectionEnd ?? content.length;
-    const stamp = Date.now();
+    const stamp = (batches.current += 1);
     const placeholders = files.map(
       (file, index) => `![Uploading ${file.name}…](uploading-${stamp}-${index})`
     );
@@ -95,6 +111,62 @@ export default function PostForm({ post, action, submitLabel }: Props) {
         setContent((text) => text.replace(placeholders[index], () => image));
       })
     );
+  }
+
+  // Replace the selection, then select `select` (offsets in the new text).
+  function edit(start: number, end: number, text: string, select: [number, number]) {
+    flushSync(() => setContent(content.slice(0, start) + text + content.slice(end)));
+    editor.current?.focus();
+    editor.current?.setSelectionRange(...select);
+  }
+
+  function wrap(before: string, after = before) {
+    const area = editor.current;
+    if (!area) return;
+    const { selectionStart: start, selectionEnd: end } = area;
+    const text = before + content.slice(start, end) + after;
+    edit(start, end, text, [start + before.length, end + before.length]);
+  }
+
+  // Headings, quotes and lists mark every selected line; a second click
+  // removes the mark again.
+  function markLines(mark: string) {
+    const area = editor.current;
+    if (!area) return;
+    const start = content.lastIndexOf("\n", area.selectionStart - 1) + 1;
+    const end = area.selectionEnd;
+    const lines = content.slice(start, end).split("\n");
+    const marked = lines.every((line) => line.startsWith(mark));
+    const text = lines
+      .map((line) =>
+        marked
+          ? line.slice(mark.length)
+          : mark + line.replace(/^(#+ |> |- )/, "")
+      )
+      .join("\n");
+    edit(start, end, text, [start, start + text.length]);
+  }
+
+  function addLink() {
+    const url = window.prompt("Link address", "https://");
+    if (url && url !== "https://") wrap("[", `](${url})`);
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (!(event.metaKey || event.ctrlKey)) return;
+    const key = event.key.toLowerCase();
+    if (key === "b") wrap("**");
+    else if (key === "i") wrap("*");
+    else if (key === "k") addLink();
+    else return;
+    event.preventDefault();
+  }
+
+  // Marks ending in a space style whole lines; the others wrap the selection.
+  function format(mark: string) {
+    if (mark === "link") addLink();
+    else if (mark.endsWith(" ")) markLines(mark);
+    else wrap(mark);
   }
 
   function onDragOver(event: DragEvent, target: "cover" | "content") {
@@ -223,26 +295,47 @@ export default function PostForm({ post, action, submitLabel }: Props) {
       <div>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <label htmlFor="content" className="text-sm text-muted">
-            Content <span className="opacity-60">(Markdown)</span>
+            Content
           </label>
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-lg border border-line p-0.5 text-sm">
-              {(["write", "preview"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  aria-pressed={tab === mode}
-                  onClick={() => setTab(mode)}
-                  className={`rounded-md px-3 py-1 capitalize transition-colors ${
-                    tab === mode
-                      ? "bg-white/10 text-foreground"
-                      : "text-muted hover:text-foreground"
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
+          <div className="flex rounded-lg border border-line p-0.5 text-sm">
+            {(["write", "preview"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                aria-pressed={tab === mode}
+                onClick={() => setTab(mode)}
+                className={`rounded-md px-3 py-1 capitalize transition-colors ${
+                  tab === mode
+                    ? "bg-white/10 text-foreground"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </div>
+        {tab === "write" && (
+          <div
+            role="toolbar"
+            aria-label="Formatting"
+            aria-controls="content"
+            className="mb-2 flex flex-wrap gap-1.5"
+          >
+            {TOOLS.map(([label, title, mark]) => (
+              <button
+                key={label}
+                type="button"
+                title={title}
+                aria-label={title}
+                onClick={() => format(mark)}
+                className={`${quietButton} ${
+                  label === "B" ? "font-bold" : label === "I" ? "italic" : ""
+                }`}
+              >
+                {label}
+              </button>
+            ))}
             <button
               type="button"
               className={quietButton}
@@ -262,7 +355,7 @@ export default function PostForm({ post, action, submitLabel }: Props) {
               }}
             />
           </div>
-        </div>
+        )}
         <textarea
           ref={editor}
           id="content"
@@ -271,11 +364,12 @@ export default function PostForm({ post, action, submitLabel }: Props) {
           value={content}
           onChange={(event) => setContent(event.target.value)}
           onPaste={onPaste}
+          onKeyDown={onKeyDown}
           onDragOver={(event) => onDragOver(event, "content")}
           onDragLeave={() => setDragging(null)}
           onDrop={(event) => onDrop(event, "content")}
           placeholder={"## Heading\n\nWrite anything you want here…"}
-          className={`${field} resize-y font-mono leading-relaxed ${
+          className={`${field} resize-y text-base leading-relaxed ${
             tab === "write" ? "" : "hidden"
           } ${dragging === "content" ? "border-accent" : ""}`}
         />
@@ -289,11 +383,13 @@ export default function PostForm({ post, action, submitLabel }: Props) {
           </div>
         )}
         <p className="mt-2 text-xs leading-relaxed text-muted">
-          Drop or paste images into the text, or use + Image. Images are
-          resized and their location data removed before upload. Add a caption
-          like this:{" "}
+          Press Enter to start a new paragraph. Put the cursor on a line and
+          use Heading, Quote or List to style it. Drop or paste images where
+          they should appear; they are resized and their location data
+          removed before upload. To add a caption, write it in quotes after
+          the image address:{" "}
           <code className="font-mono text-foreground">
-            ![Alt text](image-url &quot;Caption&quot;)
+            ![Alt text](/media/… &quot;Caption&quot;)
           </code>
         </p>
       </div>
