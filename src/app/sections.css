@@ -388,8 +388,7 @@
 @media (max-width: 767px) {
   .portfolio-deck .deck-panel:not(.deck-home) .panel-content {
     --chapter-gap: 24px;
-    width: calc(100% - 62px);
-    left: -11px;
+    width: calc(100% - 40px);
     padding-block: 24px;
   }
   .portfolio-deck .deck-label {
@@ -685,7 +684,7 @@
 
 @media (max-width: 374px) {
   .portfolio-deck .deck-panel:not(.deck-home) .panel-content {
-    width: calc(100% - 54px);
+    width: calc(100% - 32px);
     padding-block: 18px;
     --chapter-gap: 20px;
   }

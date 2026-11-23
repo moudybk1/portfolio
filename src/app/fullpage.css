@@ -386,9 +386,7 @@ body:has(.portfolio-deck) {
 }
 @media (max-width: 767px) {
   .panel-content {
-    width: calc(100% - 62px);
-    position: relative;
-    left: -11px;
+    width: calc(100% - 40px);
     padding-block: 24px;
   }
   .deck-heading {
@@ -838,8 +836,7 @@ body:has(.portfolio-deck) {
 }
 @media (max-width: 374px) {
   .panel-content {
-    width: calc(100% - 54px);
-    left: -11px;
+    width: calc(100% - 32px);
   }
   .deck-hero-actions {
     gap: 8px;
@@ -1346,5 +1343,47 @@ body:has(.portfolio-deck) {
     grid-row: 1;
     width: 28px;
     height: 28px;
+  }
+}
+
+/* Phones: move the page indicator to a slim bottom bar so it never covers
+   content, and give panels even, full-width gutters. */
+@media (max-width: 767px) {
+  .panel-scroll {
+    padding-bottom: 52px;
+  }
+  .deck-indicator {
+    top: auto;
+    right: auto;
+    left: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: auto;
+    flex-direction: row;
+    gap: 10px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--background) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .deck-indicator-pages {
+    flex-direction: row;
+    gap: 0;
+  }
+  .deck-indicator-pages button {
+    width: 20px;
+    height: 28px;
+    justify-content: center;
+  }
+  .deck-indicator-line {
+    width: 10px;
+  }
+  .deck-indicator-pages button[aria-current] .deck-indicator-line {
+    width: 18px;
+  }
+  .deck-indicator-position {
+    width: auto;
+    font-size: 10px;
   }
 }
